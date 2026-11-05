@@ -1076,8 +1076,8 @@ body.dev #lock #lclock[data-s=aod] .aclk{font-size:calc(min(24cqw,100px)*var(--l
 .cam2 .cmodes::-webkit-scrollbar{display:none}
 .cam2 .cmodes button{border:0;background:transparent;color:rgb(255 255 255/.72);font-weight:600;font-size:14px;padding:6px 12px;border-radius:16px;white-space:nowrap;transition:background .25s,color .25s}
 .cam2 .cmodes button[aria-pressed=true]{background:rgb(255 255 255/.22);color:#ffd54a}
-.cam2 .czoom{display:flex;justify-content:center;gap:6px}
-.cam2 .czoom button{width:40px;height:40px;border-radius:50%;border:0;background:rgb(0 0 0/.42);color:#fff;font-weight:700;font-size:12px;transition:border-radius .3s var(--spring),background .2s,color .2s}
+.cam2 .czoom{display:flex;justify-content:safe center;gap:4px;overflow-x:auto;scrollbar-width:none}.cam2 .czoom button{flex:none}
+.cam2 .czoom button{width:38px;height:38px;border-radius:50%;border:0;background:rgb(0 0 0/.42);color:#fff;font-weight:700;font-size:12px;transition:border-radius .3s var(--spring),background .2s,color .2s}
 .cam2 .czoom button[aria-pressed=true]{background:#ffd54a;color:#1b1b1b;border-radius:14px}
 .cam2 .cpanel{display:flex;gap:8px;overflow:auto;padding:2px 2px 4px;scrollbar-width:none;justify-content:flex-start}
 .cam2 .cpanel::-webkit-scrollbar{display:none}
@@ -1466,6 +1466,24 @@ body[data-cam=udc] #fx .cut::after{background:radial-gradient(circle,rgb(0 0 0/.
 body.dev[data-cam=holel] #status{padding-left:48px}
 body.dev[data-cam=holer] #status{padding-right:48px}
 body[data-cam]:not([data-cam=pop]) #popw,body[data-cam]:not([data-cam=pop]) #popin{display:none!important}
+
+/* ===== v18: камера — раскладка без перекрытий, видимая выдвижная камера ===== */
+.cam2{display:flex;flex-direction:column;background:#000}
+.cam2 .cstage{position:relative;inset:auto;order:2;flex:1;min-height:0;width:100%}
+.cam2 .ctop{position:relative;order:1;flex:none;flex-direction:row;flex-wrap:nowrap;justify-content:safe center;align-items:center;gap:6px;padding:10px 10px 8px;background:#000;overflow-x:auto;scrollbar-width:none;touch-action:pan-x}
+.cam2 .ctop::-webkit-scrollbar{display:none}
+.cam2 .ctop .cb{flex:none}
+.cam2 .cbot{position:relative;order:3;flex:none;padding:8px 14px 14px;background:#000}
+.cam2 .cpanel{position:absolute;left:0;right:0;bottom:100%;z-index:5;padding:10px 12px;background:rgb(0 0 0/.74);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.cam2 .cpanel[hidden]{display:none}
+.cam2 .cset{max-height:min(300px,45vh)}
+.cam2 .rtag{top:72px;z-index:5}
+body.dev[data-cam=pop] #dev{box-sizing:border-box;padding-top:50px}
+body.dev[data-cam=pop] #bezel{height:min(calc(94dvh - 2*var(--bt,7px) - 50px),calc((100vw - 28px)*var(--arh,2.167)))}
+#popw{width:116px;margin-left:-58px;height:46px;top:calc(-48px - var(--bt,7px));z-index:30}
+#popm{height:42px;left:6px;right:6px;border-radius:16px 16px 0 0;background:linear-gradient(180deg,#5a5a66,#26262c 55%,#0e0e12);box-shadow:inset 0 1px 0 rgb(255 255 255/.32),inset 0 0 0 1px rgb(255 255 255/.1),0 -2px 12px rgb(0 0 0/.5)}
+#popw .pml,#popin .pml{width:22px;height:22px}
+#popin{z-index:99999}
 /* форм-факторы */
 
 
@@ -2350,9 +2368,9 @@ const saveFL=()=>store.set('fl',FL);
 const FCOL=[['#ffffff','Белый'],['#ffe3a3','Тёплый'],['#cfe6ff','Холодный'],['#ffb84d','Янтарный'],['#ff453a','Красный'],['#7dffa0','Зелёный']];
 S.fled=false;S.fscr=false;S.fnoled=false;
 let lit=true,strobeT=0;
-const Cam={s:null,face:'',hi:false,q:0,users:new Set(),ls:[],
-  async open(u,face,hi){this.users.add(u);if(this.s&&this.face===face&&(this.hi||!hi)&&this.s.active)return this.s;this.stop(1);
-    try{let s;const H=hi?(this.q||(LITE?720:1080)):480,W=Math.round(H*16/9);try{s=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:face},width:{ideal:W},height:{ideal:H}}})}catch(e1){if(e1&&(e1.name==='NotAllowedError'||e1.name==='SecurityError'))throw e1;s=await navigator.mediaDevices.getUserMedia({audio:false,video:true})}this.s=s;this.face=face;this.hi=!!hi;this.ls.forEach(f=>f(s));popSync();return s}
+const Cam={s:null,face:'',hi:false,q:0,dev:'',users:new Set(),ls:[],
+  async open(u,face,hi,dev){const dv=face==='environment'?(dev||''):'';this.users.add(u);if(this.s&&this.face===face&&(this.hi||!hi)&&this.s.active&&(dev===undefined||(this.dev||'')===dv))return this.s;this.stop(1);
+    try{let s;const H=hi?(this.q||(LITE?720:1080)):480,W=Math.round(H*16/9);try{s=await navigator.mediaDevices.getUserMedia({audio:false,video:Object.assign({width:{ideal:W},height:{ideal:H}},dv?{deviceId:{exact:dv}}:{facingMode:{ideal:face}})})}catch(e1){if(e1&&(e1.name==='NotAllowedError'||e1.name==='SecurityError'))throw e1;s=await navigator.mediaDevices.getUserMedia({audio:false,video:true})}this.s=s;this.face=face;this.hi=!!hi;{const g=s.getVideoTracks()[0],gs=g&&g.getSettings?g.getSettings():{};this.dev=dv&&gs.deviceId===dv?dv:''}this.ls.forEach(f=>f(s));popSync();return s}
     catch(e){this.users.delete(u);popSync();throw e}},
   stop(q){if(this.s){this.s.getTracks().forEach(t=>t.stop());this.s=null}if(!q)popSync()},
   close(u){this.users.delete(u);if(!this.users.size)this.stop()},
@@ -2415,16 +2433,122 @@ function flashApp(a){
 }
 async function savePhoto(blob,vid,quiet){try{await DB.put('photos',{id:Date.now()+Math.random(),t:Date.now(),blob,video:!!vid});if(!quiet)toast(vid?'Видео сохранено':'Снимок сохранён',vid?'videocam':'photo_camera');return true}catch(e){toast('Не удалось сохранить','error');return false}}
 
+/* ---------- v18: собственная обработка фото и поиск объективов ---------- */
+function boxBlurF(S,w,h,r){const T=new Float32Array(S.length),O=new Float32Array(S.length),k=2*r+1,acc=new Float32Array(w);
+  for(let y=0;y<h;y++){const o=y*w;let a=0;for(let x=-r;x<=r;x++)a+=S[o+Math.min(w-1,Math.max(0,x))];
+    for(let x=0;x<w;x++){T[o+x]=a/k;a+=S[o+Math.min(w-1,x+r+1)]-S[o+Math.max(0,x-r)]}}
+  for(let y=-r;y<=r;y++){const o=Math.min(h-1,Math.max(0,y))*w;for(let x=0;x<w;x++)acc[x]+=T[o+x]}
+  for(let y=0;y<h;y++){const o=y*w,p=Math.min(h-1,y+r+1)*w,q=Math.max(0,y-r)*w;for(let x=0;x<w;x++){O[o+x]=acc[x]/k;acc[x]+=T[p+x]-T[q+x]}}
+  return O}
+/* билатеральный шумодав 3×3: сглаживает шум, но не края (вес по разнице яркости соседей) */
+function denoiseRGB(d,w,h,sg){const src=new Uint8ClampedArray(d),n=w*h,Yp=new Uint8Array(n),lut=new Float32Array(256);
+  for(let i=0;i<256;i++)lut[i]=Math.exp(-(i*i)/(2*sg*sg));
+  for(let i=0,p=0;p<n;i+=4,p++)Yp[p]=(src[i]*77+src[i+1]*150+src[i+2]*29)>>8;
+  const off=[-w-1,-w,-w+1,-1,1,w-1,w,w+1],kw=[.7,1,.7,1,1,.7,1,.7];
+  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const p=y*w+x,yc=Yp[p];let ws=1,r=src[p*4],g=src[p*4+1],b=src[p*4+2];
+    for(let j=0;j<8;j++){const q=p+off[j],df=Yp[q]-yc,wt=lut[df<0?-df:df]*kw[j];ws+=wt;r+=src[q*4]*wt;g+=src[q*4+1]*wt;b+=src[q*4+2]*wt}
+    const i=p*4;d[i]=r/ws;d[i+1]=g/ws;d[i+2]=b/ws}}
+/* попиксельная обработка: шумодав → баланс белого → уровни/гамма/S-кривая → локальный тон-маппинг → живость → резкость */
+function enhancePx(c,k,dark){
+  const w=c.width,h=c.height,x=c.getContext('2d',{willReadFrequently:true}),im=x.getImageData(0,0,w,h),d=im.data,n=w*h;
+  denoiseRGB(d,w,h,(dark?22:9)*Math.max(.6,k));
+  const hist=new Uint32Array(256);let sr=0,sg=0,sb=0,cnt=0;
+  for(let i=0;i<d.length;i+=16){hist[(d[i]*77+d[i+1]*150+d[i+2]*29)>>8]++;sr+=d[i];sg+=d[i+1];sb+=d[i+2];cnt++}
+  const pc=p=>{let a=0;const t=cnt*p;for(let i=0;i<256;i++){a+=hist[i];if(a>=t)return i}return 255};
+  const lo=Math.min(pc(.005),dark?40:55),hi=Math.max(pc(.995),dark?150:200),span=Math.max(60,hi-lo);
+  const ar=sr/cnt,ag=sg/cnt,ab=sb/cnt,mg=(ar+ag+ab)/3;
+  const wb=v=>1+Math.max(-.12,Math.min(.12,(mg/Math.max(v,1)-1)*.5*k));
+  const gr=wb(ar),gg=wb(ag),gb=wb(ab);
+  let ml=0,tot=0;for(let i=0;i<256;i++){ml+=Math.max(0,Math.min(1,(i-lo)/span))*hist[i];tot+=hist[i]}
+  ml=Math.max(.04,Math.min(.95,ml/Math.max(1,tot)));
+  let g=Math.log(dark?.36:.46)/Math.log(ml);g=1+(Math.max(.55,Math.min(1.35,g))-1)*Math.min(1.2,k);
+  const cv=(v,gain)=>{let t=(v*gain-lo)/span;t=t<0?0:t>1?1:t;t=Math.pow(t,g);
+    t+=(dark?.1:.04)*k*4*t*(1-t)*(1-t);
+    t-=.3*k*Math.sin(6.2832*t)/6.2832;
+    return t<0?0:t>1?1:t};
+  const LR=new Uint8Array(256),LG=new Uint8Array(256),LB=new Uint8Array(256);
+  for(let i=0;i<256;i++){LR[i]=cv(i,gr)*255+.5;LG[i]=cv(i,gg)*255+.5;LB[i]=cv(i,gb)*255+.5}
+  const Y=new Uint8Array(n),vib=.2*k*(dark?.6:1);
+  for(let i=0,p=0;p<n;i+=4,p++){
+    let r=LR[d[i]],g2=LG[d[i+1]],b=LB[d[i+2]];
+    const l=(r*77+g2*150+b*29)>>8,mx=Math.max(r,g2,b),mn=Math.min(r,g2,b),s=mx?(mx-mn)/mx:0,f=1+vib*(1-s);
+    d[i]=l+(r-l)*f;d[i+1]=l+(g2-l)*f;d[i+2]=l+(b-l)*f;Y[p]=l}
+  /* локальное среднее яркости на уменьшенной сетке (для адаптивного подъёма теней и «чёткости») */
+  const f=Math.max(1,Math.round(Math.max(w,h)/640)),ws=Math.ceil(w/f),hs=Math.ceil(h/f),sm=new Float32Array(ws*hs),sc=new Float32Array(ws*hs);
+  for(let y=0;y<h;y++){const ro=Math.min(hs-1,(y/f)|0)*ws,o=y*w;for(let xx=0;xx<w;xx++){const q=ro+Math.min(ws-1,(xx/f)|0);sm[q]+=Y[o+xx];sc[q]++}}
+  for(let i=0;i<sm.length;i++)sm[i]/=Math.max(1,sc[i]);
+  const LM=boxBlurF(sm,ws,hs,Math.max(3,Math.round(Math.min(ws,hs)/12)));
+  const T=new Uint16Array(n);
+  for(let y=0;y<h;y++){const o=y*w;for(let xx=0;xx<w;xx++)T[o+xx]=Y[o+(xx?xx-1:0)]+Y[o+xx]+Y[o+(xx<w-1?xx+1:xx)]}
+  const XI=new Int32Array(w),XT=new Float32Array(w);
+  for(let xx=0;xx<w;xx++){const fx=Math.max(0,Math.min(ws-1.001,(xx+.5)/f-.5));XI[xx]=fx|0;XT[xx]=fx-(fx|0)}
+  const kl=(dark?.2:.12)*k*.7,kc=.3*k,gD=dark?.35*k:.65*k;
+  for(let y=0;y<h;y++){const o=y*w,u=(y?y-1:0)*w,dn=(y<h-1?y+1:y)*w,fy=Math.max(0,Math.min(hs-1.001,(y+.5)/f-.5)),y0=fy|0,ty=fy-y0,r0=y0*ws,r1=r0+ws;
+    for(let xx=0;xx<w;xx++){const yy=Y[o+xx],x0=XI[xx],tx=XT[xx];
+      const L=((LM[r0+x0]+(LM[r0+x0+1]-LM[r0+x0])*tx)*(1-ty))+((LM[r1+x0]+(LM[r1+x0+1]-LM[r1+x0])*tx)*ty);
+      const sh=1-L/255;let t=(yy+kl*sh*sh*(255-yy)+(yy>14?kc*(yy-L):0))/(yy>6?yy:6);t=t<.65?.65:t>2.3?2.3:t;
+      const det=yy-(T[u+xx]+T[o+xx]+T[dn+xx])*.1111111,dl=det*(dark?(yy<80?-.5*(1-yy/80):gD):gD),i=(o+xx)*4;
+      d[i]=d[i]*t+dl;d[i+1]=d[i+1]*t+dl;d[i+2]=d[i+2]*t+dl}}
+  x.putImageData(im,0,0)}
+/* нерезкая маска с радиусом r (для кадров после сильного зума) */
+function unsharpC(c,r,amt){const w=c.width,h=c.height,x=c.getContext('2d',{willReadFrequently:true}),im=x.getImageData(0,0,w,h),d=im.data,n=w*h,Y=new Float32Array(n);
+  for(let i=0,p=0;p<n;i+=4,p++)Y[p]=(d[i]*77+d[i+1]*150+d[i+2]*29)/256;
+  const B=boxBlurF(Y,w,h,r);
+  for(let i=0,p=0;p<n;i+=4,p++){const dl=(Y[p]-B[p])*amt;d[i]+=dl;d[i+1]+=dl;d[i+2]+=dl}
+  x.putImageData(im,0,0)}
+/* субпиксельный сдвиг (Лукас–Канаде): B(x+dx,y+dy)≈A(x,y) */
+function lkShift(A,B,w,h){let dx=0,dy=0,err=0;const st=w*h>150000?2:1,m=Math.max(2,Math.floor(Math.min(w,h)*.06));
+  for(let it=0;it<7;it++){let a=0,b=0,c=0,e=0,f=0,cnt=0,ea=0;
+    for(let y=m;y<h-m;y+=st)for(let x=m;x<w-m;x+=st){const xs=x+dx,ys=y+dy;if(xs<0||ys<0||xs>=w-1.01||ys>=h-1.01)continue;
+      const x0=xs|0,y0=ys|0,fx=xs-x0,fy=ys-y0,i=y0*w+x0,v00=B[i],v10=B[i+1],v01=B[i+w],v11=B[i+w+1],
+        val=v00*(1-fx)*(1-fy)+v10*fx*(1-fy)+v01*(1-fx)*fy+v11*fx*fy,gx=(v10-v00)*(1-fy)+(v11-v01)*fy,gy=(v01-v00)*(1-fx)+(v11-v10)*fx,r=A[y*w+x]-val;
+      a+=gx*gx;b+=gx*gy;c+=gy*gy;e+=gx*r;f+=gy*r;ea+=Math.abs(r);cnt++}
+    if(cnt<16){err=999;break}err=ea/cnt;const det=a*c-b*b;if(Math.abs(det)<1e-6)break;
+    const ux=(c*e-b*f)/det,uy=(a*f-b*e)/det;dx+=ux;dy+=uy;if(Math.abs(ux)<.01&&Math.abs(uy)<.01)break}
+  const lim=Math.max(2,Math.min(w,h)*.12);return[Math.max(-lim,Math.min(lim,dx)),Math.max(-lim,Math.min(lim,dy)),err]}
+/* бикубическое (Catmull–Rom) увеличение RGBA-буфера */
+function cubicResize(src,sw,sh,dw,dh){
+  const cr=t=>{t=Math.abs(t);return t<1?1.5*t*t*t-2.5*t*t+1:t<2?-.5*t*t*t+2.5*t*t-4*t+2:0};
+  const tab=(sn,dn)=>{const I=new Int32Array(dn*4),Wt=new Float32Array(dn*4);
+    for(let i=0;i<dn;i++){const sf=(i+.5)*sn/dn-.5,i0=Math.floor(sf),fr=sf-i0,w4=[cr(fr+1),cr(fr),cr(1-fr),cr(2-fr)],sm=w4[0]+w4[1]+w4[2]+w4[3];
+      for(let j=0;j<4;j++){I[i*4+j]=Math.max(0,Math.min(sn-1,i0-1+j));Wt[i*4+j]=w4[j]/sm}}return[I,Wt]};
+  const[HI,HW]=tab(sw,dw),[VI,VW]=tab(sh,dh),tmp=new Float32Array(dw*sh*3);
+  for(let y=0;y<sh;y++){const ro=y*sw*4,to=y*dw*3;
+    for(let x=0;x<dw;x++){let r=0,g=0,b=0;for(let j=0;j<4;j++){const p=ro+HI[x*4+j]*4,wt=HW[x*4+j];r+=src[p]*wt;g+=src[p+1]*wt;b+=src[p+2]*wt}
+      tmp[to+x*3]=r;tmp[to+x*3+1]=g;tmp[to+x*3+2]=b}}
+  const out=new Uint8ClampedArray(dw*dh*4);
+  for(let y=0;y<dh;y++){const o=y*dw*4;
+    for(let x=0;x<dw;x++){let r=0,g=0,b=0;for(let j=0;j<4;j++){const p=VI[y*4+j]*dw*3+x*3,wt=VW[y*4+j];r+=tmp[p]*wt;g+=tmp[p+1]*wt;b+=tmp[p+2]*wt}
+      const q=o+x*4;out[q]=r;out[q+1]=g;out[q+2]=b;out[q+3]=255}}
+  return out}
+function smallLuma(c){const t=document.createElement('canvas');t.width=64;t.height=36;const x=t.getContext('2d',{willReadFrequently:true});x.drawImage(c,0,0,64,36);
+  const d=x.getImageData(0,0,64,36).data,o=new Float32Array(2304);for(let i=0;i<2304;i++)o[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];return o}
+function shiftBest(ref,cur){let best=1e9,bx=0,by=0;
+  for(let sy=-5;sy<=5;sy++)for(let sx=-5;sx<=5;sx++){let a=0,m=0;
+    for(let y=0;y<36;y++){const yy=y+sy;if(yy<0||yy>=36)continue;for(let xx=0;xx<64;xx++){const x2=xx+sx;if(x2<0||x2>=64)continue;a+=Math.abs(ref[y*64+xx]-cur[yy*64+x2]);m++}}
+    a/=Math.max(1,m);if(a<best){best=a;bx=sx;by=sy}}
+  return[bx,by]}
+const lensGray=vd=>{const c=document.createElement('canvas');c.width=96;c.height=72;c.getContext('2d',{willReadFrequently:true}).drawImage(vd,0,0,96,72);return c};
+function lensPatch(src,f){const c=document.createElement('canvas');c.width=24;c.height=18;const x=c.getContext('2d',{willReadFrequently:true}),sw=src.width*f,sh=src.height*f;
+  x.drawImage(src,(src.width-sw)/2,(src.height-sh)/2,sw,sh,0,0,24,18);const d=x.getImageData(0,0,24,18).data,o=new Float32Array(432);
+  for(let i=0;i<432;i++)o[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];return o}
+function nccf(a,b){const n=a.length;let ma=0,mb=0;for(let i=0;i<n;i++){ma+=a[i];mb+=b[i]}ma/=n;mb/=n;let s=0,va=0,vb=0;
+  for(let i=0;i<n;i++){const p=a[i]-ma,q=b[i]-mb;s+=p*q;va+=p*p;vb+=q*q}return s/Math.sqrt(va*vb+1e-6)}
+/* во сколько раз кадр B шире (k>1) или уже (k<1) кадра A: подбираем масштаб с лучшим совпадением центра */
+function relFov(A,B){let best=-1,bk=1;
+  for(let k=.4;k<=3.01;k*=1.06){const sc=k>=1?nccf(lensPatch(B,1/k),lensPatch(A,1)):nccf(lensPatch(A,k),lensPatch(B,1));if(sc>best){best=sc;bk=k}}
+  return{k:bk,sc:best}}
+
 /* Камера */
 const CFIL=[['Без фильтра',''],['Ч/Б','grayscale(1) contrast(1.08)'],['Сепия','sepia(.85) contrast(1.05)'],['Яркий','saturate(1.55) contrast(1.1)'],['Холод','saturate(1.1) hue-rotate(-14deg) brightness(1.03)'],['Тепло','sepia(.3) saturate(1.35) hue-rotate(-10deg)'],['Винтаж','sepia(.5) contrast(.88) saturate(.8) brightness(1.06)'],['Драма','contrast(1.4) saturate(.8) brightness(.9)'],['Негатив','invert(1)']];
 const CF_OK=(()=>{try{return 'filter' in document.createElement('canvas').getContext('2d')}catch(e){return false}})();
-const CS=Object.assign({grid:false,mirror:true,snd:true,stamp:false,mic:true,q:'auto',ratio:'full'},store.get('cam',{}));
+const CS=Object.assign({grid:false,mirror:true,snd:true,stamp:false,mic:true,q:'auto',ratio:'full',enh:true,night:true,es:1,lens:true},store.get('cam',{}));
 const saveCS=()=>store.set('cam',CS);
 const CRAT={full:null,'4:3':4/3,'16:9':16/9,'1:1':1},CRL=['full','4:3','16:9','1:1'];
 const CMODES=[['photo','Фото'],['video','Видео'],['burst','Серия'],['scan','Скан']];
 function cameraApp(a){
   let face='environment',busy=false,off=false,lastUrl='',mode='photo',mr=null,chunks=[],mic=null,tim=0,t0=0,pacc=0,paused=false,rcv=null;
-  let zoom=1,hz=null,ev=0,fil=0,tmr=0,fm='off',panel='',cdT=0,burstBusy=false,caps={};
+  let zoom=1,hz=null,ev=0,fil=0,tmr=0,fm='off',panel='',cdT=0,burstBusy=false,caps={},lensId='',lens=store.get('lens',{})||{},onWide=false,detecting=false;
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   Cam.q=CS.q==='auto'?0:+CS.q;
   const v=h('video',{class:'cview',playsinline:true,muted:true,autoplay:true});v.muted=true;
@@ -2449,22 +2573,27 @@ function cameraApp(a){
   a.el.append(root);
   const isFront=()=>{const t=Cam.track(),f=t&&t.getSettings?t.getSettings().facingMode:'';return f?f==='user':(desk?true:face==='user')};
   const fstr=()=>!CF_OK?'':mode==='scan'?'grayscale(1) contrast(1.75) brightness(1.12)':[ev?'brightness('+(1+ev*.22).toFixed(3)+')':'',CFIL[fil][1]].filter(Boolean).join(' ');
-  const fmtZ=n=>String(+n.toFixed(1)).replace('.',',')+'×';
+  const fmtZ=n=>String(+n.toFixed(n<10?1:0)).replace('.',',')+'×';
+  const MAXZ=120;
+  const hwz=()=>hz?Math.max(hz.min,Math.min(zoom,hz.max)):1;
+  const dz=()=>onWide?1:(hz?Math.max(1,zoom/hwz()):Math.max(1,zoom));
   /* кадр, зум, предпросмотр */
   function layout(){const W=stage.clientWidth,H=stage.clientHeight;if(!W||!H)return;const ra=CRAT[CS.ratio];let w=W,hh=H;
     if(ra){const r=H>W?(ra===1?1:1/ra):ra;w=Math.min(W,H*r);hh=w/r}
     frame.style.width=w+'px';frame.style.height=hh+'px';root.classList.toggle('fr',!!ra)}
   const ro=window.ResizeObserver?new ResizeObserver(layout):null;if(ro)ro.observe(stage);layout();
-  function view(){const z=hz?1:zoom;v.style.transform='scaleX('+(isFront()?-1:1)+') scale('+z+')';v.style.filter=fstr()}
-  const zp=()=>{const hi=hz?Math.min(hz.max,10):(LITE?4:6),L=[];if(hz&&hz.min<.9)L.push(hz.min);L.push(1);[2,4].forEach(x=>{if(x<=hi)L.push(x)});return L};
+  function view(){const z=dz();v.style.transform='scaleX('+(isFront()?-1:1)+') scale('+z+')';v.style.filter=fstr()}
+  const zp=()=>{const L=[];if(hz&&hz.min<.9)L.push(hz.min);else if(!hz&&lens.wide&&face==='environment')L.push(.5);L.push(1);[2,5,10,30,MAXZ].forEach(x=>L.push(x));return L};
   function zRender(){const P=zp();zbox.replaceChildren(...P.map(p=>h('button',{'data-z':p,onclick:()=>setZoom(p)},fmtZ(p))));zUi()}
   function zUi(){const bs=[...zbox.children];let k=0,bd=1e9;bs.forEach((b,i)=>{const d=Math.abs(Math.log(zoom/(+b.dataset.z)));if(d<bd){bd=d;k=i}});
     bs.forEach((b,i)=>{b.setAttribute('aria-pressed',i===k);b.textContent=i===k?fmtZ(zoom):fmtZ(+b.dataset.z)})}
-  function setZoom(z){const lo=hz?hz.min:1,hi=hz?Math.min(hz.max,10):(LITE?4:6);zoom=Math.max(lo,Math.min(hi,z));
-    if(hz){const t=Cam.track();t&&t.applyConstraints({advanced:[{zoom}]}).catch(()=>{})}view();zUi()}
+  function setZoom(z){const wl=!hz&&!!lens.wide&&face==='environment',lo=hz?hz.min:(wl?.5:1),hi=MAXZ;z=Math.max(lo,Math.min(hi,z));
+    if(wl){if(busy)return;if(z>=.8&&z<1)z=1;if(z<.8){zoom=.5;if(!onWide)useLens(lens.wide);else{view();zUi()}return}if(onWide){useLens('',z);return}}
+    zoom=z;
+    if(hz){const t=Cam.track();t&&t.applyConstraints({advanced:[{zoom:hwz()}]}).catch(()=>{})}view();zUi()}
   const ptr=new Map();let pd=0,pz0=1,moved=0;
   stage.addEventListener('pointerdown',e=>{ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;if(ptr.size===2){const [p,q]=[...ptr.values()];pd=Math.hypot(p[0]-q[0],p[1]-q[1]);pz0=zoom}});
-  stage.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;ptr.set(e.pointerId,[e.clientX,e.clientY]);if(ptr.size===2&&pd){const [p,q]=[...ptr.values()];moved=1;setZoom(pz0*Math.hypot(p[0]-q[0],p[1]-q[1])/pd)}});
+  stage.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;ptr.set(e.pointerId,[e.clientX,e.clientY]);if(ptr.size===2&&pd){const [p,q]=[...ptr.values()];moved=1;setZoom(pz0*Math.pow(Math.hypot(p[0]-q[0],p[1]-q[1])/pd,1.8))}});
   const pend=e=>{if(!ptr.has(e.pointerId))return;const was=ptr.size;ptr.delete(e.pointerId);if(was===1&&!moved&&e.type==='pointerup')tapFocus(e);if(ptr.size<2)pd=0};
   stage.addEventListener('pointerup',pend);stage.addEventListener('pointercancel',pend);
   stage.addEventListener('wheel',e=>{e.preventDefault();setZoom(zoom*(e.deltaY<0?1.12:1/1.12))},{passive:false});
@@ -2476,11 +2605,14 @@ function cameraApp(a){
   function snapUrl(){if(!v.videoWidth)return '';try{const c=document.createElement('canvas');c.width=c.height=104;const r=crop(),m=Math.min(r.sw,r.sh);c.getContext('2d').drawImage(v,r.sx+(r.sw-m)/2,r.sy+(r.sh-m)/2,m,m,0,0,104,104);return c.toDataURL('image/jpeg',.6)}catch(e){return ''}}
   function setPanel(n){panel=panel===n?'':n;cp.hidden=!panel;cp.className='cpanel'+(panel==='set'?' cset':'');
     if(panel==='fil'){const u=snapUrl();cp.replaceChildren(...CFIL.map(([nm,f],i)=>h('button',{class:'cfl','aria-pressed':i===fil,onclick:()=>{fil=i;[...cp.children].forEach((x,j)=>x.setAttribute('aria-pressed',j===i));view();setUi()}},h('s',{},h('i',{style:(u?'background-image:url('+u+');':'background:linear-gradient(135deg,#6aa,#a66);')+'filter:'+f})),nm)))}
-    else if(panel==='ev'){const r=h('input',{type:'range',min:-20,max:20,value:Math.round(ev*10),'aria-label':'Экспозиция',oninput:()=>{ev=r.value/10;r.style.setProperty('--p',((r.value+20)/40*100)+'%');lb.textContent=(ev>0?'+':'')+ev.toFixed(1)+' EV';view();setUi()}}),lb=h('span',{},(ev>0?'+':'')+ev.toFixed(1)+' EV');r.style.setProperty('--p',((+r.value+20)/40*100)+'%');cp.replaceChildren(h('div',{class:'cev',style:'width:100%'},ic('exposure'),r,lb))}
+    else if(panel==='ev'){const r=h('input',{type:'range',min:-20,max:20,value:Math.round(ev*10),'aria-label':'Экспозиция',oninput:()=>{ev=r.value/10;r.style.setProperty('--p',((+r.value+20)/40*100)+'%');lb.textContent=(ev>0?'+':'')+ev.toFixed(1)+' EV';view();setUi()}}),lb=h('span',{},(ev>0?'+':'')+ev.toFixed(1)+' EV');r.style.setProperty('--p',((+r.value+20)/40*100)+'%');cp.replaceChildren(h('div',{class:'cev',style:'width:100%'},ic('exposure'),r,lb))}
     else if(panel==='set'){
       const tg=(icon,label,key)=>{const b=h('button',{class:'crow','aria-pressed':CS[key],onclick:()=>{CS[key]=!CS[key];b.setAttribute('aria-pressed',CS[key]);saveCS()}},ic(icon),h('span',{class:'t'},label),h('span',{class:'sw'}));return b};
-      const q=h('select',{'aria-label':'Качество видео',onchange:async()=>{CS.q=q.value;saveCS();Cam.q=CS.q==='auto'?0:+CS.q;if(!mr&&Cam.s){Cam.stop();try{attach(await Cam.open('cam',face,true))}catch(e){toast('Камера недоступна','no_photography')}}}},[['auto','Авто'],['720','720p'],['1080','1080p']].map(([k,n])=>h('option',{value:k},n)));q.value=CS.q;
-      cp.replaceChildren(tg('flip','Зеркалить селфи','mirror'),tg('volume_up','Звук затвора и таймера','snd'),tg('schedule','Дата и время на снимке','stamp'),tg('mic','Микрофон при записи видео','mic'),
+      const q=h('select',{'aria-label':'Качество видео',onchange:async()=>{CS.q=q.value;saveCS();Cam.q=CS.q==='auto'?0:+CS.q;if(!mr&&Cam.s){Cam.stop();try{attach(await Cam.open('cam',face,true,lensId))}catch(e){toast('Камера недоступна','no_photography')}}}},[['auto','Авто'],['720','720p'],['1080','1080p']].map(([k,n])=>h('option',{value:k},n)));q.value=CS.q;
+      const es=h('select',{'aria-label':'Сила обработки',onchange:()=>{CS.es=+es.value;saveCS()}},[['0.6','Мягко'],['1','Авто'],['1.4','Сильно']].map(([k,n])=>h('option',{value:k},n)));es.value=String(CS.es);
+      cp.replaceChildren(tg('flip','Зеркалить селфи','mirror'),tg('volume_up','Звук затвора и таймера','snd'),tg('schedule','Дата и время на снимке','stamp'),tg('mic','Микрофон при записи видео','mic'),tg('auto_fix_high','Улучшать фото (авто-обработка)','enh'),tg('bedtime','Ночной режим (склейка кадров)','night'),
+        h('div',{class:'crow'},ic('tonality'),h('span',{class:'t'},'Сила обработки'),es),
+        h('button',{class:'crow',onclick:()=>{setPanel('');detectLenses(true)}},ic('wb_iridescent'),h('span',{class:'t'},'Найти широкоугольный объектив')),
         h('div',{class:'crow'},ic('high_quality'),h('span',{class:'t'},'Качество видео'),q),
         h('button',{class:'crow',onclick:()=>{fil=0;ev=0;tmr=0;fm==='torch'&&cycleFlash();fm='off';setZoom(1);view();setUi();setPanel('')}},ic('restart_alt'),h('span',{class:'t'},'Сбросить параметры кадра')))}
     setUi()}
@@ -2507,7 +2639,7 @@ function cameraApp(a){
   const beep=f=>{if(!CS.snd)return;const c=audio();if(c)blip(f,c.currentTime,.07,'sine',.2)};
   const click=()=>{if(!CS.snd)return;const c=audio();if(c){blip(2200,c.currentTime,.025,'square',.1);blip(1100,c.currentTime+.045,.05,'square',.08)}};
   /* съёмка */
-  function crop(){const vw=v.videoWidth,vh=v.videoHeight,fw=frame.clientWidth||1,fh=frame.clientHeight||1,fa=fw/fh,va=vw/vh,z=hz?1:zoom;let w,hh;if(va>fa){hh=vh;w=vh*fa}else{w=vw;hh=vw/fa}w/=z;hh/=z;return{sx:(vw-w)/2,sy:(vh-hh)/2,sw:w,sh:hh}}
+  function crop(){const vw=v.videoWidth,vh=v.videoHeight,fw=frame.clientWidth||1,fh=frame.clientHeight||1,fa=fw/fh,va=vw/vh,z=dz();let w,hh;if(va>fa){hh=vh;w=vh*fa}else{w=vw;hh=vw/fa}w/=z;hh/=z;return{sx:(vw-w)/2,sy:(vh-hh)/2,sw:w,sh:hh}}
   function draw(x,w,hh,mir){const r=crop();x.save();x.filter=fstr()||'none';if(mir){x.translate(w,0);x.scale(-1,1)}x.drawImage(v,r.sx,r.sy,r.sw,r.sh,0,0,w,hh);x.restore()}
   function stamp(x,w,hh){const d=new Date(),t=pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+'  '+pad(d.getHours())+':'+pad(d.getMinutes()),fs=Math.max(12,Math.round(Math.min(w,hh)*.035));
     x.save();x.font='700 '+fs+'px sans-serif';x.textAlign='right';x.textBaseline='bottom';x.fillStyle='#ffb84d';x.shadowColor='rgb(0 0 0/.65)';x.shadowBlur=fs*.3;x.fillText(t,w-fs,hh-fs);x.restore()}
@@ -2515,10 +2647,16 @@ function cameraApp(a){
   async function ledPulse(on){const t=Cam.track();if(!t)return;try{await t.applyConstraints({advanced:[{torch:on}]})}catch(e){}}
   async function snap(quiet){
     if(!v.videoWidth)return false;
-    const r=crop(),k=Math.min(1,2560/Math.max(r.sw,r.sh)),w=Math.round(r.sw*k),hh=Math.round(r.sh*k);
-    const c=document.createElement('canvas');c.width=w;c.height=hh;const x=c.getContext('2d');draw(x,w,hh,isFront()&&CS.mirror);if(CS.stamp)stamp(x,w,hh);
+    const r=crop(),k=Math.min(1,2560/Math.max(r.sw,r.sh)),w=Math.round(r.sw*k),hh=Math.round(r.sh*k),mir=isFront()&&CS.mirror;
     click();fl.animate([{opacity:.85},{opacity:0}],{duration:380});sh.animate([{scale:1},{scale:.86},{scale:1}],{duration:320,easing:'cubic-bezier(.34,1.56,.64,1)'});
-    const b=await new Promise(res=>c.toBlob(res,'image/jpeg',.92));
+    const enh=CS.enh&&mode!=='scan'&&!fil;let dark=false;if(enh){try{dark=luma()<70}catch(e){}}
+    let c,sr=false;const dig=dz();
+    if(mode!=='scan'&&dig>=2){try{if(!quiet)toast('Зум '+fmtZ(zoom)+' — собираю детали из кадров','zoom_in');c=await superRes(dig,quiet,mir);sr=!!c}catch(e){c=null}}
+    if(!c&&enh&&dark&&CS.night&&!quiet){toast('Ночной режим — держите телефон ровно','bedtime');try{c=await grabStack(5,2048)}catch(e){c=null}}
+    if(!c){c=document.createElement('canvas');c.width=w;c.height=hh;draw(c.getContext('2d',{willReadFrequently:true}),w,hh,mir)}
+    if(enh){try{enhancePx(c,CS.es||1,dark)}catch(e){}}if(sr){try{unsharpC(c,c._ur||1,1)}catch(e){}}
+    if(CS.stamp)stamp(c.getContext('2d'),c.width,c.height);
+    const b=await new Promise(res=>c.toBlob(res,'image/jpeg',.93));
     if(b&&await savePhoto(b,false,quiet)){thumbUp();th.animate([{scale:.5},{scale:1}],{duration:450,easing:'cubic-bezier(.34,1.56,.64,1)'});return true}return false}
   async function snapFlash(){
     let use=fm==='on';if(fm==='auto')use=luma()<70;
@@ -2539,8 +2677,8 @@ function cameraApp(a){
     if(mode==='burst'){tmr?countdown(burst):burst();return}
     tmr?countdown(snapFlash):snapFlash()}
   /* видео */
-  const needCv=()=>(!hz&&zoom>1.001)||!!fstr()||CS.ratio!=='full'||CS.stamp||(isFront()&&CS.mirror);
-  function cvStream(){const r=crop(),k=Math.min(1,(LITE?960:1280)/Math.max(r.sw,r.sh)),w=Math.round(r.sw*k/2)*2,hh=Math.round(r.sh*k/2)*2;
+  const needCv=()=>dz()>1.001||!!fstr()||CS.ratio!=='full'||CS.stamp||(isFront()&&CS.mirror);
+  function cvStream(){const r=crop(),k=(LITE?960:1280)/Math.max(r.sw,r.sh),w=Math.round(r.sw*k/2)*2,hh=Math.round(r.sh*k/2)*2;
     const c=document.createElement('canvas');c.width=w;c.height=hh;const x=c.getContext('2d');let on=true,raf=0;
     const loop=()=>{if(!on)return;draw(x,w,hh,isFront()&&CS.mirror);if(CS.stamp)stamp(x,w,hh);raf=requestAnimationFrame(loop)};loop();
     return{st:c.captureStream(30),stop:()=>{on=false;cancelAnimationFrame(raf)}}}
@@ -2557,16 +2695,87 @@ function cameraApp(a){
     tim=setInterval(()=>{if(paused)return;const q=Math.floor((pacc+Date.now()-t0)/1000);tagT.textContent=Math.floor(q/60)+':'+pad(q%60)},250);setUi()}
   function recStop(){if(mr&&mr.state!=='inactive')mr.stop()}
   function pauseTog(){if(!mr)return;if(paused){mr.resume();t0=Date.now();paused=false;pz.replaceChildren(ic('pause'))}else{mr.pause();pacc+=Date.now()-t0;paused=true;pz.replaceChildren(ic('play_arrow'))}}
+  /* ---- v18: переключение объективов, склейка кадров, распознавание ширика ---- */
+  async function superRes(dig,quiet,mir){
+    const r=crop(),cw=Math.max(8,Math.round(r.sw)),ch=Math.max(8,Math.round(cw*r.sh/r.sw)),N=quiet?3:Math.max(6,Math.min(14,Math.round(4+Math.log2(dig)*2)));
+    const fc=document.createElement('canvas');fc.width=cw;fc.height=ch;const fx=fc.getContext('2d',{willReadFrequently:true}),frames=[];
+    for(let f=0;f<N;f++){const rr=crop();fx.save();fx.filter=fstr()||'none';if(mir){fx.translate(cw,0);fx.scale(-1,1)}fx.drawImage(v,rr.sx,rr.sy,rr.sw,rr.sh,0,0,cw,ch);fx.restore();
+      const d=new Uint8ClampedArray(fx.getImageData(0,0,cw,ch).data),L=new Float32Array(cw*ch);for(let i=0;i<cw*ch;i++)L[i]=.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2];
+      frames.push({d,L});if(f<N-1)await sleep(45)}
+    const S=Math.max(2,Math.min(4,Math.round(1600/Math.max(cw,ch)))),gw=cw*S,gh=ch*S,R=S*.8,ri=Math.ceil(R),A=new Float32Array(gw*gh*3),W=new Float32Array(gw*gh),ref=frames[0];
+    for(let f=0;f<N;f++){const fr=frames[f];let dx=0,dy=0;
+      if(f){const q=lkShift(ref.L,fr.L,cw,ch);if(q[2]>28)continue;dx=q[0];dy=q[1]}
+      const d=fr.d;
+      for(let y=0;y<ch;y++){const gy=(y-dy+.5)*S-.5,cy=Math.round(gy);
+        for(let x=0;x<cw;x++){const gx=(x-dx+.5)*S-.5,cx=Math.round(gx),si=(y*cw+x)*4,pr=d[si],pg=d[si+1],pb=d[si+2];
+          for(let yy=cy-ri;yy<=cy+ri;yy++){if(yy<0||yy>=gh)continue;const wy=1-Math.abs(yy-gy)/R;if(wy<=0)continue;
+            for(let xx=cx-ri;xx<=cx+ri;xx++){if(xx<0||xx>=gw)continue;const wx=1-Math.abs(xx-gx)/R;if(wx<=0)continue;const wt=wx*wy,k=yy*gw+xx;W[k]+=wt;A[k*3]+=wt*pr;A[k*3+1]+=wt*pg;A[k*3+2]+=wt*pb}}}}
+      await sleep(0)}
+    const bc=document.createElement('canvas');bc.width=gw;bc.height=gh;const bx=bc.getContext('2d',{willReadFrequently:true});bx.imageSmoothingEnabled=true;bx.imageSmoothingQuality='high';
+    fx.putImageData(new ImageData(ref.d,cw,ch),0,0);bx.drawImage(fc,0,0,gw,gh);const bd=bx.getImageData(0,0,gw,gh).data,o=new Uint8ClampedArray(gw*gh*4),b0=.15;
+    for(let k=0;k<gw*gh;k++){const m=W[k]+b0;o[k*4]=(A[k*3]+bd[k*4]*b0)/m;o[k*4+1]=(A[k*3+1]+bd[k*4+1]*b0)/m;o[k*4+2]=(A[k*3+2]+bd[k*4+2]*b0)/m;o[k*4+3]=255}
+    const OL=Math.min(LITE?2048:2560,Math.max(Math.max(gw,gh),1920)),sc=Math.max(1,OL/Math.max(gw,gh)),ow=Math.round(gw*sc),oh=Math.round(gh*sc);
+    const out=cubicResize(o,gw,gh,ow,oh),c=document.createElement('canvas');c.width=ow;c.height=oh;c.getContext('2d').putImageData(new ImageData(out,ow,oh),0,0);
+    c._ur=Math.max(1,Math.min(8,Math.round(ow/Math.max(cw,ch)/6)));return c}
+  async function useLens(id,zm){if(busy||mr)return;busy=true;lensId=id;
+    try{attach(await Cam.open('cam',face,true,id));if(zm)setZoom(zm)}
+    catch(e){lensId='';toast('Не удалось переключить объектив','no_photography');try{attach(await Cam.open('cam',face,true,''))}catch(_){}}
+    busy=false}
+  async function grabStack(nf,maxSide){
+    const r=crop(),k=Math.min(1,maxSide/Math.max(r.sw,r.sh)),w=Math.round(r.sw*k),hh=Math.round(r.sh*k),mir=isFront()&&CS.mirror;
+    const c=document.createElement('canvas');c.width=w;c.height=hh;const x=c.getContext('2d',{willReadFrequently:true});
+    const acc=new Uint16Array(w*hh*3),cn=new Uint8Array(w*hh);let ref=null;
+    for(let f=0;f<nf;f++){
+      draw(x,w,hh,mir);const d=x.getImageData(0,0,w,hh).data,sm=smallLuma(c);let dx=0,dy=0;
+      if(!ref)ref=sm;else{const sft=shiftBest(ref,sm);dx=Math.round(sft[0]*w/64);dy=Math.round(sft[1]*hh/36)}
+      for(let y=0;y<hh;y++){const sy=y+dy;if(sy<0||sy>=hh)continue;
+        for(let xx=0;xx<w;xx++){const sx=xx+dx;if(sx<0||sx>=w)continue;const si=(sy*w+sx)*4,di=y*w+xx;acc[di*3]+=d[si];acc[di*3+1]+=d[si+1];acc[di*3+2]+=d[si+2];cn[di]++}}
+      if(f<nf-1)await sleep(70)}
+    const o=x.createImageData(w,hh),od=o.data;
+    for(let p=0;p<w*hh;p++){const m=cn[p]||1;od[p*4]=acc[p*3]/m;od[p*4+1]=acc[p*3+1]/m;od[p*4+2]=acc[p*3+2]/m;od[p*4+3]=255}
+    x.putImageData(o,0,0);return c}
+  async function detectLenses(force){
+    if(detecting||desk||face!=='environment'||mr||busy||burstBusy||!Cam.s||!navigator.mediaDevices||!navigator.mediaDevices.enumerateDevices)return;
+    let list=[];try{list=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput'&&d.deviceId&&!/front|user|selfie|фронт/i.test(d.label))}catch(e){}
+    const sig=list.map(d=>d.deviceId).sort().join('|');
+    if(!force&&lens.sig===sig)return;
+    const done=o=>{lens=Object.assign({sig},o);store.set('lens',lens);zRender();view()};
+    if(list.length<2){done({});if(force)toast('Других объективов не найдено','photo_camera');return}
+    const tk=Cam.track(),mainId=(tk&&tk.getSettings?tk.getSettings().deviceId:'')||'';
+    let wide=list.find(d=>d.deviceId!==mainId&&/ultra[\s-]?wide|0[.,]5\s?x|сверхшир|ультрашир/i.test(d.label)),
+        tele=list.find(d=>d.deviceId!==mainId&&/tele|телефото/i.test(d.label));
+    if(!wide){
+      if(luma()<30){if(force)toast('Слишком темно — наведите на освещённую сцену','dark_mode');return}
+      detecting=true;if(force)toast('Определяю объективы…','wb_iridescent');
+      const res=[];
+      try{
+        if(zoom!==1){setZoom(1);await sleep(350)}
+        const A=lensGray(v);Cam.stop(1);
+        for(const d of list){if(d.deviceId===mainId||res.length>=3)continue;
+          let st;try{st=await navigator.mediaDevices.getUserMedia({audio:false,video:{deviceId:{exact:d.deviceId},width:{ideal:640},height:{ideal:480}}})}catch(e){continue}
+          const t=document.createElement('video');t.muted=true;t.playsInline=true;t.srcObject=st;try{await t.play()}catch(e){}
+          await sleep(500);
+          if(t.videoWidth){const q=relFov(A,lensGray(t));res.push({deviceId:d.deviceId,k:q.k,sc:q.sc})}
+          st.getTracks().forEach(z=>z.stop());t.srcObject=null}
+      }catch(e){}
+      try{attach(await Cam.open('cam',face,true,lensId))}catch(e){}
+      detecting=false;
+      if(!res.length){if(force)toast('Не удалось проверить объективы','error');return}
+      const ok=res.filter(q=>q.sc>.4);
+      wide=ok.filter(q=>q.k>=1.25).sort((a,b)=>b.k-a.k)[0];
+      tele=tele||ok.filter(q=>q.k<=.8).sort((a,b)=>a.k-b.k)[0]}
+    done({main:mainId,wide:wide?wide.deviceId:'',tele:tele?tele.deviceId:'',wk:wide&&wide.k||0});
+    toast(wide?'Найден широкоугольный объектив — 0,5×':'Широкоугольный объектив не найден',wide?'wb_iridescent':'photo_camera')}
   /* поток */
   async function thumbUp(){try{const l=(await DB.all('photos')).filter(x=>!x.video).sort((x,y)=>y.t-x.t)[0];if(lastUrl)URL.revokeObjectURL(lastUrl);lastUrl=l?URL.createObjectURL(l.blob):'';th.style.backgroundImage=lastUrl?'url('+lastUrl+')':''}catch(e){}}
   const attach=s=>{v.srcObject=s;face=Cam.face;const t=Cam.track();caps=t&&t.getCapabilities?t.getCapabilities():{};
-    hz=caps.zoom&&caps.zoom.max>caps.zoom.min?{min:caps.zoom.min,max:caps.zoom.max}:null;zoom=hz?Math.max(hz.min,Math.min(1,hz.max)):1;
+    hz=caps.zoom&&caps.zoom.max>caps.zoom.min?{min:caps.zoom.min,max:caps.zoom.max}:null;zoom=hz?Math.max(hz.min,Math.min(1,hz.max)):1;onWide=face==='environment'&&!!lens.wide&&!!Cam.dev&&Cam.dev===lens.wide;if(onWide){hz=null;zoom=.5}
     if(hz)t.applyConstraints({advanced:[{zoom}]}).catch(()=>{});
     v.play().catch(()=>{});msg.hidden=true;zRender();view();layout();syncT()};
   Cam.ls.push(attach);
   a.on(()=>{if(mr)try{mr.stop()}catch(_){}cancelCount();clearInterval(tim);if(rcv)rcv.stop();if(ro)ro.disconnect();Cam.ls=Cam.ls.filter(f=>f!==attach);flashSubs.delete(syncT);Cam.close('cam');v.srcObject=null;if(lastUrl)URL.revokeObjectURL(lastUrl)});
   async function start(){
-    try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw 0;if(face==='user')popCam(true);attach(await Cam.open('cam',face,true))}
+    try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw 0;if(face==='user')popCam(true);attach(await Cam.open('cam',face,true,lensId));if(face==='environment'&&CS.lens!==false)setTimeout(()=>detectLenses(false),1400)}
     catch(e){const sec=window.isSecureContext===false,den=!!e&&(e.name==='NotAllowedError'||e.name==='SecurityError');msg.hidden=false;
       msg.replaceChildren(ic('no_photography'),h('b',{},sec?'Камера недоступна на этой странице':den?'Нет доступа к камере':'Камера не найдена'),
         h('span',{},sec?'Браузер разрешает камеру только на защищённых страницах (https или localhost). Откройте ALFA OS по такому адресу.':den?'Разрешите доступ к камере для этого сайта в настройках браузера и нажмите «Повторить».':'Не удалось запустить камеру. Проверьте, что она подключена и не занята другим приложением.'),
@@ -2574,7 +2783,7 @@ function cameraApp(a){
   async function flipCam(){if(busy||mr||cdT||burstBusy)return;busy=true;const nf=face==='user'?'environment':'user';
     if(nf==='user'&&S.fled){await setLed(false);upFlash()}if(nf==='user'&&fm==='torch')fm='off';popCam(nf==='user');if(nf==='user')await sleep(AK>0.01?Math.round(380*AK/2):0);
     const o=v.animate([{opacity:1,scale:1},{opacity:.35,scale:.97}],{duration:220,fill:'forwards'});sw.animate([{rotate:'0deg'},{rotate:'180deg'}],{duration:450,easing:'cubic-bezier(.2,0,0,1)'});
-    try{attach(await Cam.open('cam',nf,true))}catch(e){toast('Камера недоступна','no_photography')}
+    try{attach(await Cam.open('cam',nf,true,lensId))}catch(e){toast('Камера недоступна','no_photography')}
     o.cancel();v.animate([{opacity:.35,scale:.97},{opacity:1,scale:1}],{duration:380});busy=false}
   a.every(()=>{const vis=a.visible();if(!vis&&!off&&!mr&&!burstBusy){off=true;Cam.close('cam');v.srcObject=null}else if(vis&&off){off=false;start()}},400);
   setUi();start();thumbUp();
