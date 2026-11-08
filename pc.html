@@ -1,5 +1,5 @@
 <!doctype html><html><head><script>/* === РЕЖИМ ===  ALFA_HIDE — приложения, которых НЕТ в этой версии. Меняйте списки здесь (и в соседнем файле). */
-window.ALFA_MODE='pc';window.ALFA_HIDE=['phone','messages','contacts','recorder','compass','g2048','flappy','slide15','snake'];window.modeHide=function(i){return window.ALFA_HIDE.indexOf(i)>=0};
+window.ALFA_MODE='pc';window.ALFA_HIDE=['phone','messages','contacts','recorder','compass','radio','g2048','flappy','slide15','snake'];window.modeHide=function(i){return window.ALFA_HIDE.indexOf(i)>=0};
 try{localStorage.setItem('alfa.mode',JSON.stringify('pc'))}catch(e){}</script><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0e111a"><meta name="application-name" content="ALFA OS"><meta name="description" content="ALFA OS — мобильная ОС в браузере">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ALFA OS"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -2751,6 +2751,61 @@ body.dev.plugged #dev{padding-bottom:46px;box-sizing:border-box}
 #os.gest:not(.desk) .win[data-app=camera] .cam2 .cbot{padding-bottom:34px}
 #os:not(.desk):has(.win[data-app=camera]:not(.min)) #status{color:#fff}
 .desk .win[data-app=camera] .cam2{margin:0;border-radius:0}
+
+/* ===== ПК: свободное размещение иконок, индикатор ячейки, кнопка правки часов ===== */
+.dind{position:fixed;z-index:39;pointer-events:none;border-radius:12px;border:2px dashed color-mix(in oklab,var(--primary) 80%,transparent);background:color-mix(in oklab,var(--primary) 14%,transparent);transition:left .12s,top .12s}
+#lkbtn{display:none}
+#os.desk #lkbtn{display:inline-flex;position:absolute;right:24px;top:20px;z-index:8;align-items:center;gap:6px;height:40px;padding:0 16px;border:0;border-radius:20px;background:var(--glass,rgb(255 255 255/.14));color:inherit;font:600 14px var(--display);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);cursor:pointer}
+#os.desk #lkbtn:hover{background:color-mix(in oklab,var(--primary) 30%,transparent)}
+#lock.lked-on #lkbtn{display:none!important}
+
+/* ===== Проводник ===== */
+.fx{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0;font-size:13.5px;color:var(--on-surface);outline:none}
+.fx button{font:inherit;color:inherit;cursor:pointer}
+.fxtb{display:flex;align-items:center;gap:6px;padding:8px 10px 4px}
+.fxb{width:34px;height:34px;border:0;border-radius:10px;background:transparent;display:grid;place-items:center;flex:none}
+.fxb:hover:not(:disabled){background:color-mix(in oklab,var(--on-surface) 10%,transparent)}.fxb:disabled{opacity:.35;cursor:default}
+.fxaddr{flex:1;min-width:0;display:flex;align-items:center;gap:2px;height:34px;padding:0 10px;border-radius:10px;background:var(--surf-3,rgb(128 128 128/.15));overflow:hidden;white-space:nowrap}
+.fxaddr .ms{font-size:18px;opacity:.75;flex:none}
+.fxcr{border:0;background:transparent;padding:4px 7px;border-radius:7px;white-space:nowrap}button.fxcr:hover{background:color-mix(in oklab,var(--on-surface) 12%,transparent)}
+.fxsrch{width:190px;height:34px;border:0;border-radius:10px;padding:0 12px;background:var(--surf-3,rgb(128 128 128/.15));color:inherit;font:inherit;outline:none}
+.fxsrch:focus{box-shadow:inset 0 0 0 2px var(--primary)}
+.fxcmd{display:flex;align-items:center;gap:2px;padding:2px 10px 6px;flex-wrap:wrap;border-bottom:1px solid var(--outline,rgb(128 128 128/.25))}
+.fxcb{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 10px;border:0;border-radius:9px;background:transparent}
+.fxcb .ms{font-size:20px}.fxcb:hover:not(:disabled){background:color-mix(in oklab,var(--on-surface) 10%,transparent)}.fxcb:disabled{opacity:.35;cursor:default}
+.fxsep{width:1px;height:20px;background:var(--outline,rgb(128 128 128/.3));margin:0 4px}
+.fxbody{flex:1;min-height:0;display:flex}
+.fxnav{width:200px;flex:none;overflow:auto;padding:8px 6px;border-right:1px solid var(--outline,rgb(128 128 128/.25));display:flex;flex-direction:column;gap:1px}
+.fxni{display:flex;align-items:center;gap:10px;width:100%;height:34px;padding:0 10px;border:0;border-radius:9px;background:transparent;text-align:left}
+.fxni span:not(.ms){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fxni .ms{font-size:20px;color:var(--primary)}
+.fxni:hover{background:color-mix(in oklab,var(--on-surface) 9%,transparent)}.fxni.on{background:color-mix(in oklab,var(--primary) 22%,transparent);font-weight:600}.fxni.drop,.fxr.drop{outline:2px dashed var(--primary);outline-offset:-2px}
+.fxsub{margin:10px 10px 4px;font-size:12px;color:var(--on-surface-v);font-weight:600}
+.fxuse{margin-top:auto;display:flex;align-items:center;gap:8px;padding:10px;color:var(--on-surface-v);font-size:12px}
+.fxmain{flex:1;min-width:0;overflow:auto;padding:6px 8px;position:relative;align-content:start}
+.fxmain.drop{background:color-mix(in oklab,var(--primary) 8%,transparent);outline:2px dashed var(--primary);outline-offset:-4px}
+.fxr{display:flex;align-items:center;gap:10px;min-height:34px;padding:2px 8px;border-radius:8px;cursor:default;user-select:none}
+.fxr:hover{background:color-mix(in oklab,var(--on-surface) 8%,transparent)}.fxr.on{background:color-mix(in oklab,var(--primary) 24%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--primary) 60%,transparent)}.fxr.cut{opacity:.5}
+.fxi{width:26px;height:26px;display:grid;place-items:center;flex:none;color:var(--primary)}.fxi .ms{font-size:24px}.fxi.d .ms{font-variation-settings:'FILL' 1}
+.fxn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fxc{width:140px;flex:none;color:var(--on-surface-v);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fxc.r,.fxh .r{text-align:right;width:90px}
+.fxh{display:flex;align-items:center;gap:10px;padding:2px 8px 6px;position:sticky;top:-6px;z-index:2;background:var(--surface);color:var(--on-surface-v);font-size:12px;border-bottom:1px solid var(--outline,rgb(128 128 128/.25));margin-bottom:4px}
+.fxh button{border:0;background:transparent;display:flex;align-items:center;padding:4px 0;width:140px;flex:none}.fxh button:first-of-type{flex:1;width:auto}.fxh .r{justify-content:flex-end}.fxh .ms{font-size:18px}.fxh .fxi{height:0}
+.fxmain.v-details .fxc:nth-of-type(1){width:140px}
+.fxmain.v-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px 6px}
+.fxmain.v-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.v-icons .fxr{flex-direction:column;align-items:center;text-align:center;padding:10px 6px;gap:6px;min-height:0;height:124px}
+.v-icons .fxi{width:64px;height:64px}.v-icons .fxi .ms{font-size:52px}.v-icons .fxi img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.v-icons .fxn{flex:none;max-width:100%;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;font-size:12.5px}
+.fxren{min-width:0;flex:1;height:26px;border:0;border-radius:6px;padding:0 6px;background:var(--surface);color:inherit;font:inherit;box-shadow:inset 0 0 0 2px var(--primary);outline:none}.v-icons .fxren{width:100%;flex:none}
+.fxempty{grid-column:1/-1;margin:60px auto;text-align:center;color:var(--on-surface-v);display:flex;flex-direction:column;align-items:center;gap:8px}.fxempty .ms{font-size:48px;opacity:.6}
+.fxstat{padding:6px 14px;border-top:1px solid var(--outline,rgb(128 128 128/.25));color:var(--on-surface-v);font-size:12px}
+.fxov{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;background:var(--surface);outline:none}
+.fxoh{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--outline,rgb(128 128 128/.25))}.fxoh b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fxsp{flex:1}
+.fxob{flex:1;min-height:0;display:grid;place-items:center;background:color-mix(in oklab,var(--surface) 80%,#000);overflow:auto}
+.fxob img,.fxob video{max-width:100%;max-height:100%;object-fit:contain}.fxob iframe{width:100%;height:100%;border:0;background:#fff}
+.fxta{width:100%;height:100%;border:0;resize:none;padding:14px;background:var(--surface);color:inherit;font:14px/1.5 ui-monospace,Consolas,monospace;outline:none}
+.fxaud{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px}.fxaud .ms{font-size:72px;color:var(--primary)}.fxaud audio{width:min(420px,90%)}
+@media (max-width:700px){.fxnav{display:none}.fxsrch{width:120px}}
 </style>
 
 <div id="dev"><div id="bezel">
@@ -3405,20 +3460,151 @@ function notesApp(a){
 
 /* Файлы */
 function filesApp(a){
-  const F=(name,size,icon)=>({name,size,icon:icon||'description'});
-  const FS={name:'Память',kids:[
-    {name:'Документы',kids:[F('План проекта.docx','184 КБ'),F('Бюджет.xlsx','92 КБ','table_chart'),F('Заметки.txt','2 КБ')]},
-    {name:'Изображения',kids:[F('Закат.jpg','2,4 МБ','image'),F('Скриншот.png','812 КБ','image'),F('Логотип.svg','14 КБ','image')]},
-    {name:'Музыка',kids:[F('Утро.mp3','4,1 МБ','music_note'),F('Дорога.mp3','5,6 МБ','music_note')]},
-    {name:'Загрузки',kids:[F('Установщик.zip','48 МБ','folder_zip'),F('Книга.pdf','7,3 МБ','picture_as_pdf')]}]};
-  let path=[FS],sel=null;
-  function render(){const node=path[path.length-1];a.setTitle(node.name);
-    const crumbs=h('div',{class:'crumbs'},path.map((p,i)=>h('button',{class:'chip','aria-pressed':i===path.length-1,onclick:()=>{path=path.slice(0,i+1);sel=null;render()}},p.name)));
-    const rows=node.kids.map(k=>h('button',{class:'li frow',onclick:()=>{if(k.kids){path.push(k);sel=null}else sel=k;render()}},
-      h('span',{class:'ai tone-'+(k.kids?'p':'s')},(()=>{const s=h('span');s.innerHTML='<svg viewBox="0 0 100 100"><path d="'+SHAPES[k.kids?0:1]+'"/></svg>';return s.firstChild})(),ic(k.kids?'folder':k.icon)),
-      h('span',{class:'lt'},h('b',{},k.name),h('small',{},k.kids?k.kids.length+' элементов':k.size)),k.kids?ic('chevron_right'):null));
-    a.el.replaceChildren(h('div',{class:'page'},crumbs,h('div',{class:'group'},rows),sel?h('div',{class:'info'},ic('info'),h('div',{},h('b',{},sel.name),h('div',{},sel.size+' · файл'))):null))}
-  render();return{canBack:()=>!!sel||path.length>1,back(){if(sel){sel=null;render();return true}if(path.length>1){path.pop();render();return true}return false}};
+  /* ===== Проводник (как в Windows): настоящие файлы в памяти браузера, корзина, копирование, перетаскивание ===== */
+  const SYS={desktop:['Рабочий стол','desktop_windows'],downloads:['Загрузки','download'],docs:['Документы','description'],pics:['Изображения','image'],music:['Музыка','music_note'],video:['Видео','movie']},SK=Object.keys(SYS);
+  let all=[],view=store.get('fxv','details'),sk='name',sd=1,cur='root',hist=['root'],hi=0,sel=new Set(),anchor=null,clip=null,q='',ren=null,ov=null;
+  const th=new Map();a.on(()=>th.forEach(u=>URL.revokeObjectURL(u)));
+  const fmtS=n=>n<1024?n+' Б':n<1048576?(n/1024).toFixed(n<10240?1:0).replace('.',',')+' КБ':n<1073741824?(n/1048576).toFixed(1).replace('.',',')+' МБ':(n/1073741824).toFixed(2).replace('.',',')+' ГБ';
+  const fmtD=t=>t?new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+  const ext=n=>{const m=/\.([^.]+)$/.exec(n);return m?m[1].toLowerCase():''};
+  const TXT=/^(txt|md|json|csv|log|html|css|js|xml|ini|cfg)$/;
+  const isTxt=it=>!it.dir&&(TXT.test(ext(it.name))||(it.mime||'').startsWith('text/'));
+  const kindOf=it=>{if(it.dir)return it.sys?'Системная папка':'Папка с файлами';const m=it.mime||'',e=ext(it.name);if(m.startsWith('image/'))return'Изображение';if(m.startsWith('audio/'))return'Аудио';if(m.startsWith('video/'))return'Видео';if(e==='pdf')return'Документ PDF';if(isTxt(it))return'Текстовый документ';return e?'Файл «'+e.toUpperCase()+'»':'Файл'};
+  const iconOf=it=>{if(it.dir)return it.sys?SYS[it.fid][1]:'folder';const m=it.mime||'',e=ext(it.name);return m.startsWith('image/')?'image':m.startsWith('audio/')?'music_note':m.startsWith('video/')?'movie':e==='pdf'?'picture_as_pdf':/^(zip|rar|7z|gz|tar)$/.test(e)?'folder_zip':/^(xls|xlsx|csv)$/.test(e)?'table_chart':'description'};
+  async function load(){const [f,p,m]=await Promise.all([DB.all('files').catch(()=>[]),DB.all('photos').catch(()=>[]),DB.all('music').catch(()=>[])]);
+    const pad=n=>String(n).padStart(2,'0'),stamp=t=>{const d=new Date(t);return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())};
+    const ex=(b,def)=>({'image/png':'.png','image/webp':'.webp','image/gif':'.gif','video/mp4':'.mp4','video/webm':'.webm','audio/mpeg':'.mp3','audio/mp4':'.m4a','audio/wav':'.wav','audio/ogg':'.ogg'})[b&&b.type]||def;
+    all=[...(f||[]).map(r=>({id:'f:'+r.id,src:'files',raw:r,rid:r.id,fid:r.id,name:r.name,dir:r.kind==='folder',parent:r.parent,size:r.size||0,t:r.t,mime:r.mime||'',tr:r.trashed})),
+      ...(p||[]).map(r=>({id:'p:'+r.id,src:'photos',raw:r,rid:r.id,name:r.name||((r.video?'VID_':'IMG_')+stamp(r.t)+ex(r.blob,r.video?'.mp4':'.jpg')),dir:false,parent:r.video?'video':'pics',size:r.blob?r.blob.size:0,t:r.t,mime:r.blob?r.blob.type||(r.video?'video/mp4':'image/jpeg'):''})),
+      ...(m||[]).map(r=>({id:'m:'+r.id,src:'music',raw:r,rid:r.id,name:r.name||((r.title||'Трек')+ex(r.blob,'.mp3')),dir:false,parent:'music',size:r.blob?r.blob.size:0,t:r.t,mime:r.blob?r.blob.type||'audio/mpeg':''}))];
+    draw()}
+  const byId=id=>all.find(x=>x.id===id),fById=r=>all.find(x=>x.src==='files'&&x.rid===r);
+  const parentOf=id=>id==='root'||id==='trash'||SK.includes(id)?'root':(fById(id)||{parent:'root'}).parent;
+  const nameOf=id=>id==='root'?'Этот компьютер':id==='trash'?'Корзина':SYS[id]?SYS[id][0]:(fById(id)||{name:'Папка'}).name;
+  const canWrite=()=>cur!=='root'&&cur!=='trash'&&!q;
+  const list=()=>{if(q)return all.filter(x=>!x.tr&&x.name.toLowerCase().includes(q.toLowerCase()));
+    if(cur==='root')return SK.map(k=>({id:'s:'+k,sys:1,fid:k,dir:true,name:SYS[k][0],size:0,t:0}));
+    if(cur==='trash')return all.filter(x=>x.tr&&x.src==='files');return all.filter(x=>x.parent===cur&&!x.tr)};
+  const sorted=l=>cur==='root'&&!q?l:l.slice().sort((x,y)=>{if(x.dir!==y.dir)return x.dir?-1:1;const v=sk==='size'?x.size-y.size:sk==='t'?(x.t||0)-(y.t||0):sk==='kind'?kindOf(x).localeCompare(kindOf(y),'ru'):x.name.localeCompare(y.name,'ru',{numeric:true});return v*sd});
+  const selItems=()=>[...sel].map(byId).filter(Boolean);
+  const uniq=(p,n,skip)=>{const s=new Set(all.filter(x=>x.parent===p&&!x.tr&&x.id!==skip).map(x=>x.name.toLowerCase()));if(!s.has(n.toLowerCase()))return n;const m=/^(.*?)(\.[^.]*)?$/.exec(n),b=m[1],e=m[2]||'';let i=2;while(s.has((b+' ('+i+')'+e).toLowerCase()))i++;return b+' ('+i+')'+e};
+  const rid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const mpOn=()=>typeof MP!=='undefined'&&MP&&MP.list;
+  /* ---- операции ---- */
+  async function addFile(p,name,blob){name=uniq(p,name);const t=Date.now(),m=blob.type||'';
+    if((p==='pics'&&m.startsWith('image/'))||(p==='video'&&m.startsWith('video/'))){await DB.put('photos',{id:t+Math.random(),t,blob,video:p==='video',name});return}
+    if(p==='music'&&m.startsWith('audio/')){const o={id:t+Math.random(),t,title:name.replace(/\.[^.]+$/,''),blob,name};await DB.put('music',o);try{if(mpOn()){MP.list.push({id:o.id,title:o.title,artist:'Моя музыка',url:URL.createObjectURL(blob),own:1});MP.emit()}}catch(e){}return}
+    await DB.put('files',{id:rid(),parent:p,name,kind:'file',blob,t,size:blob.size,mime:m})}
+  async function delRaw(it){await DB.del(it.src,it.rid);if(it.src==='music'&&mpOn()){const k=MP.list.findIndex(x=>x.id===it.rid);if(k>=0){MP.list.splice(k,1);try{MP.emit()}catch(e){}}}}
+  const descend=it=>{const o=[],w=id=>all.filter(x=>x.src==='files'&&x.parent===id).forEach(c=>{o.push(c);if(c.dir)w(c.rid)});if(it.dir)w(it.rid);return o};
+  async function toTrash(its){for(const it of its){if(it.sys)continue;if(it.src==='files')await DB.put('files',{...it.raw,trashed:Date.now(),from:it.raw.parent});else{await DB.put('files',{id:rid(),parent:it.parent,from:it.parent,trashed:Date.now(),name:it.name,kind:'file',blob:it.raw.blob,t:it.t,size:it.size,mime:it.mime});await delRaw(it)}}}
+  async function erase(its){for(const it of its){for(const c of descend(it))await DB.del('files',c.rid);await delRaw(it)}}
+  async function restore(its){for(const it of its){const from=it.raw.from||'docs',ok=SK.includes(from)||all.some(x=>x.src==='files'&&x.rid===from&&x.dir&&!x.tr),p=ok?from:'docs';
+    if(it.dir)await DB.put('files',{...it.raw,trashed:null,parent:p,name:uniq(p,it.name)});else{await addFile(p,it.name,it.raw.blob);await DB.del('files',it.rid)}}}
+  async function rename(it,nn){nn=(nn||'').trim().replace(/[\\/:*?"<>|]/g,'');if(!nn||nn===it.name)return;nn=uniq(it.parent,nn,it.id);const r={...it.raw};r.name=nn;if(it.src==='music')r.title=nn.replace(/\.[^.]+$/,'');await DB.put(it.src,r);
+    if(it.src==='music'&&mpOn()){const k=MP.list.find(x=>x.id===it.rid);if(k)k.title=r.title}}
+  const isDesc=(id,anc)=>{let c=id,n=0;while(c&&n++<60){if(c===anc)return true;c=parentOf(c)}return false};
+  async function copyInto(it,p,move){
+    if(it.dir){if(it.sys)return;if(isDesc(p,it.rid)){toast('Нельзя вложить папку в саму себя','block');return}
+      if(move){if(it.raw.parent!==p)await DB.put('files',{...it.raw,parent:p,name:uniq(p,it.name)});return}
+      const nid=rid();await DB.put('files',{id:nid,parent:p,name:uniq(p,it.name),kind:'folder',t:Date.now()});for(const c of all.filter(x=>x.src==='files'&&x.parent===it.rid&&!x.tr))await copyInto(c,nid,false);return}
+    if(move&&it.parent===p)return;await addFile(p,it.name,it.raw.blob);if(move)await delRaw(it)}
+  async function putInto(ids,p,move){for(const id of ids){const it=byId(id);if(it)await copyInto(it,p,move)}await load()}
+  async function paste(){if(!clip||!canWrite())return;const c=clip;if(c.cut)clip=null;await putInto(c.ids,cur,c.cut)}
+  async function upload(fl){if(!canWrite()){toast('Откройте папку, чтобы добавить файлы','folder_open');return}for(const f of fl)await addFile(cur,f.name,f);if(fl.length)toast('Добавлено файлов: '+fl.length,'upload_file');await load()}
+  async function mk(dir){if(!canWrite())return;const name=uniq(cur,dir?'Новая папка':'Новый текстовый документ.txt'),id=rid();
+    if(dir)await DB.put('files',{id,parent:cur,name,kind:'folder',t:Date.now()});else await DB.put('files',{id,parent:cur,name,kind:'file',blob:new Blob([''],{type:'text/plain'}),t:Date.now(),size:0,mime:'text/plain'});
+    ren='f:'+id;sel=new Set([ren]);await load()}
+  async function del(perm){const its=selItems().filter(x=>!x.sys);if(!its.length)return;
+    if(perm||cur==='trash'){if(!confirm('Удалить навсегда: '+(its.length>1?its.length+' элем.':'«'+its[0].name+'»')+'? Это нельзя отменить.'))return;await erase(its)}else{await toTrash(its);toast('Перемещено в корзину','delete')}
+    sel.clear();await load()}
+  function dl(it){const u=URL.createObjectURL(it.raw.blob),l=h('a',{href:u,download:it.name});document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+  /* ---- навигация ---- */
+  function go(id,nohist){if(id===cur&&!nohist&&!q)return;if(!nohist){hist=hist.slice(0,hi+1);hist.push(id);hi=hist.length-1}cur=id;sel.clear();q='';srch.value='';ren=null;ov=null;draw()}
+  const back=()=>{if(hi>0){hi--;go(hist[hi],true);return true}return false},fwd=()=>{if(hi<hist.length-1){hi++;go(hist[hi],true)}},up=()=>{if(cur!=='root')go(parentOf(cur))};
+  function open(it){if(it.dir){go(it.fid);return}if(it.tr){toast('Восстановите файл, чтобы открыть его','restore_from_trash');return}const m=it.mime||'';
+    if(m.startsWith('image/')||m.startsWith('audio/')||m.startsWith('video/')||ext(it.name)==='pdf'||isTxt(it)){ov=it;drawOv()}else{dl(it);toast('Скачивание: '+it.name,'download')}}
+  function pick(it,e){if(e.shiftKey&&anchor){const l=sorted(list()).map(x=>x.id),i=l.indexOf(anchor),j=l.indexOf(it.id);if(i>=0&&j>=0)sel=new Set(l.slice(Math.min(i,j),Math.max(i,j)+1))}
+    else if(e.ctrlKey||e.metaKey){sel.has(it.id)?sel.delete(it.id):sel.add(it.id);anchor=it.id}else{sel=new Set([it.id]);anchor=it.id}drawMain();drawCmd();drawStat()}
+  /* ---- интерфейс ---- */
+  const root=h('div',{class:'fx',tabindex:'0'});
+  const bBack=h('button',{class:'fxb',title:'Назад','aria-label':'Назад',onclick:back},ic('arrow_back')),bFwd=h('button',{class:'fxb',title:'Вперёд','aria-label':'Вперёд',onclick:fwd},ic('arrow_forward')),bUp=h('button',{class:'fxb',title:'Вверх','aria-label':'Вверх',onclick:up},ic('arrow_upward'));
+  const addr=h('div',{class:'fxaddr'}),srch=h('input',{class:'fxsrch',type:'search',placeholder:'Поиск','aria-label':'Поиск',oninput:()=>{q=srch.value.trim();sel.clear();drawMain();drawAddr();drawCmd();drawStat()}});
+  const cmd=h('div',{class:'fxcmd'}),nav=h('div',{class:'fxnav'}),main=h('div',{class:'fxmain'}),stat=h('div',{class:'fxstat'});
+  const fin=h('input',{type:'file',multiple:true,hidden:true,onchange:async()=>{await upload([...fin.files]);fin.value=''}});
+  root.append(h('div',{class:'fxtb'},bBack,bFwd,bUp,addr,srch),cmd,h('div',{class:'fxbody'},nav,main),stat,fin);a.el.append(root);
+  const chain=id=>{const o=[];let c=id,n=0;while(c!=='root'&&n++<60){o.unshift(c);c=parentOf(c)}o.unshift('root');return o};
+  function drawAddr(){addr.replaceChildren(ic(cur==='trash'?'delete':cur==='root'?'computer':'folder'),...(q?[h('span',{class:'fxcr'},'Результаты поиска: «'+q+'»')]:cur==='trash'?[h('button',{class:'fxcr',onclick:()=>go('root')},'Этот компьютер'),ic('chevron_right'),h('span',{class:'fxcr'},'Корзина')]:chain(cur).flatMap((id,i,ar)=>[i?ic('chevron_right'):null,h('button',{class:'fxcr',onclick:()=>go(id)},nameOf(id))])))}
+  const mn=(x,y,items)=>ctx(x,y,items);
+  const cb=(icon,label,fn,dis)=>h('button',{class:'fxcb',disabled:dis?'':null,title:label,'aria-label':label,onclick:fn},ic(icon),label?h('span',{},label):null);
+  function menuAt(btn,items){const r=btn.getBoundingClientRect();mn(r.left,r.bottom+4,items)}
+  const setView=v=>{view=v;store.set('fxv',v);draw()};
+  const viewItems=()=>[{i:'table_rows',t:'Таблица',fn:()=>setView('details')},{i:'view_list',t:'Список',fn:()=>setView('list')},{i:'grid_view',t:'Крупные значки',fn:()=>setView('icons')}];
+  const sortItems=()=>[['name','Имя'],['t','Дата изменения'],['kind','Тип'],['size','Размер']].map(([k,n])=>({i:sk===k?'check':'sort',t:n,fn:()=>{sk=k;draw()}})).concat([{i:sd>0?'arrow_upward':'arrow_downward',t:sd>0?'По возрастанию':'По убыванию',fn:()=>{sd=-sd;draw()}}]);
+  function drawCmd(){const its=selItems().filter(x=>!x.sys),one=its.length===1,w=canWrite();
+    if(cur==='trash'){cmd.replaceChildren(cb('restore_from_trash','Восстановить',async()=>{await restore(selItems());sel.clear();await load()},!its.length),cb('delete_forever','Удалить навсегда',()=>del(true),!its.length),cb('delete_sweep','Очистить корзину',async()=>{const t=all.filter(x=>x.tr&&x.src==='files');if(!t.length)return;if(!confirm('Очистить корзину? Файлов: '+t.length))return;await erase(t);sel.clear();await load()},!all.some(x=>x.tr&&x.src==='files')));return}
+    let nb;nb=cb('add_circle','Создать',()=>menuAt(nb,[{i:'create_new_folder',t:'Папку',fn:()=>mk(true)},{i:'note_add',t:'Текстовый документ',fn:()=>mk(false)}]),!w);
+    let vb;vb=cb('view_module','Вид',()=>menuAt(vb,viewItems()));let sb;sb=cb('sort','Сортировка',()=>menuAt(sb,sortItems()));
+    cmd.replaceChildren(nb,h('i',{class:'fxsep'}),cb('content_cut','',()=>{clip={cut:true,ids:its.map(x=>x.id)};draw()},!its.length),cb('content_copy','',()=>{clip={cut:false,ids:its.map(x=>x.id)};toast('Скопировано','content_copy')},!its.length),cb('content_paste','Вставить',paste,!(clip&&w)),cb('drive_file_rename_outline','',()=>{ren=its[0].id;drawMain()},!one),cb('delete','',()=>del(false),!its.length),h('i',{class:'fxsep'}),cb('upload_file','Загрузить',()=>fin.click(),!w),cb('download','',()=>its.filter(x=>!x.dir).forEach(dl),!its.some(x=>!x.dir)),h('i',{class:'fxsep'}),sb,vb)}
+  function drawNav(){const n=(id,icon,label)=>{const b=h('button',{class:'fxni'+(cur===id?' on':''),onclick:()=>go(id)},ic(icon),h('span',{},label));if(id!=='trash'&&id!=='root')dropTarget(b,()=>id);return b};
+    const tr=all.filter(x=>x.tr&&x.src==='files').length,used=all.reduce((s,x)=>s+(x.size||0),0);
+    nav.replaceChildren(n('root','computer','Этот компьютер'),h('div',{class:'fxsub'},'Быстрый доступ'),...SK.map(k=>n(k,SYS[k][1],SYS[k][0])),h('div',{class:'fxsub'},'Прочее'),n('trash',tr?'delete':'delete','Корзина'+(tr?' ('+tr+')':'')),h('div',{class:'fxuse'},ic('database'),h('span',{},'Занято: '+fmtS(used))))}
+  function dropTarget(el,getP){el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect=e.ctrlKey?'copy':'move';el.classList.add('drop')});el.addEventListener('dragleave',()=>el.classList.remove('drop'));
+    el.addEventListener('drop',async e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drop');const p=getP(),fl=[...(e.dataTransfer.files||[])];
+      if(fl.length){if(p==='root'||p==='trash')return;for(const f of fl)await addFile(p,f.name,f);toast('Добавлено файлов: '+fl.length,'upload_file');await load();return}
+      const ids=(e.dataTransfer.getData('text/x-fx')||'').split('\n').filter(Boolean);if(ids.length&&p!=='root'&&p!=='trash')await putInto(ids,p,!e.ctrlKey)})}
+  const thumb=it=>{if(!(it.mime||'').startsWith('image/')||!it.raw||!it.raw.blob||it.size>12e6)return null;let u=th.get(it.id);if(!u){u=URL.createObjectURL(it.raw.blob);th.set(it.id,u)}return h('img',{src:u,alt:'',loading:'lazy'})};
+  function renInput(it){const i=h('input',{class:'fxren',value:it.name,'aria-label':'Новое имя'});setTimeout(()=>{i.focus();const e=!it.dir&&it.name.lastIndexOf('.')>0?it.name.lastIndexOf('.'):it.name.length;i.setSelectionRange(0,e)},0);
+    const done=async ok=>{if(ren!==it.id)return;ren=null;if(ok)await rename(it,i.value);await load()};
+    i.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')done(true);else if(e.key==='Escape')done(false)});i.addEventListener('blur',()=>done(true));['click','dblclick','pointerdown','contextmenu'].forEach(t=>i.addEventListener(t,e=>e.stopPropagation()));return i}
+  function rowEl(it){const cut=clip&&clip.cut&&clip.ids.includes(it.id),r=h('div',{class:'fxr'+(sel.has(it.id)?' on':'')+(cut?' cut':''),draggable:(!it.sys&&!it.tr)?'true':null,'data-id':it.id},
+      h('span',{class:'fxi'+(it.dir?' d':'')},(view==='icons'&&thumb(it))||ic(iconOf(it))),ren===it.id?renInput(it):h('span',{class:'fxn',title:it.name},it.name),
+      view==='details'?[h('span',{class:'fxc'},it.sys?'':fmtD(it.t)),h('span',{class:'fxc'},kindOf(it)),h('span',{class:'fxc r'},it.dir?'':fmtS(it.size))]:null);
+    r.addEventListener('click',e=>{e.stopPropagation();if(ren!==it.id)pick(it,e)});r.addEventListener('dblclick',e=>{e.stopPropagation();if(ren!==it.id)open(it)});
+    r.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();if(!sel.has(it.id)){sel=new Set([it.id]);anchor=it.id;drawMain();drawCmd();drawStat()}itemMenu(e.clientX,e.clientY)});
+    r.addEventListener('dragstart',e=>{if(!sel.has(it.id))sel=new Set([it.id]);e.dataTransfer.setData('text/x-fx',[...sel].join('\n'));e.dataTransfer.effectAllowed='copyMove'});
+    if(it.dir&&!it.tr)dropTarget(r,()=>it.fid);return r}
+  function itemMenu(x,y){const its=selItems(),r=its.filter(c=>!c.sys),one=its.length===1,it=its[0],w=canWrite();
+    if(cur==='trash'&&!q)return mn(x,y,[{i:'restore_from_trash',t:'Восстановить',fn:async()=>{await restore(its);sel.clear();await load()}},{i:'delete_forever',t:'Удалить навсегда',fn:()=>del(true)}]);
+    mn(x,y,[one?{i:'open_in_new',t:'Открыть',fn:()=>open(it)}:null,r.some(c=>!c.dir)?{i:'download',t:'Скачать',fn:()=>r.filter(c=>!c.dir).forEach(dl)}:null,
+      r.length?{i:'content_cut',t:'Вырезать',fn:()=>{clip={cut:true,ids:r.map(c=>c.id)};draw()}}:null,r.length?{i:'content_copy',t:'Копировать',fn:()=>{clip={cut:false,ids:r.map(c=>c.id)};toast('Скопировано','content_copy')}}:null,
+      (one&&it.dir&&!it.sys&&clip)?{i:'content_paste',t:'Вставить в папку',fn:async()=>{const c=clip;if(c.cut)clip=null;await putInto(c.ids,it.fid,c.cut)}}:null,
+      (one&&!it.sys)?{i:'drive_file_rename_outline',t:'Переименовать',fn:()=>{ren=it.id;drawMain()}}:null,r.length?{i:'delete',t:'Удалить',fn:()=>del(false)}:null,one&&!it.sys?{i:'info',t:'Свойства',fn:()=>alert(it.name+'\nТип: '+kindOf(it)+'\nРазмер: '+(it.dir?'—':fmtS(it.size))+'\nИзменён: '+fmtD(it.t))}:null])}
+  function bgMenu(x,y){const w=canWrite();mn(x,y,[w?{i:'create_new_folder',t:'Создать папку',fn:()=>mk(true)}:null,w?{i:'note_add',t:'Создать текстовый документ',fn:()=>mk(false)}:null,(clip&&w)?{i:'content_paste',t:'Вставить',fn:paste}:null,w?{i:'upload_file',t:'Загрузить файлы…',fn:()=>fin.click()}:null,{i:'view_module',t:'Таблица',fn:()=>setView('details')},{i:'view_list',t:'Список',fn:()=>setView('list')},{i:'grid_view',t:'Крупные значки',fn:()=>setView('icons')},{i:'refresh',t:'Обновить',fn:load}])}
+  function drawMain(){const l=sorted(list());main.className='fxmain v-'+view;
+    const head=view==='details'&&l.length?h('div',{class:'fxh'},h('span',{class:'fxi'}),...[['name','Имя'],['t','Дата изменения'],['kind','Тип'],['size','Размер']].map(([k,n])=>h('button',{class:k==='size'?'r':'',onclick:()=>{if(sk===k)sd=-sd;else{sk=k;sd=1}draw()}},n,sk===k?ic(sd>0?'arrow_drop_up':'arrow_drop_down'):null))):null;
+    main.replaceChildren(head,...(l.length?l.map(rowEl):[h('div',{class:'fxempty'},ic(q?'search_off':cur==='trash'?'delete':'folder_open'),q?'Ничего не найдено':cur==='trash'?'Корзина пуста':'Папка пуста — перетащите сюда файлы или нажмите «Загрузить»')]))}
+  function drawStat(){const l=list(),s=selItems();stat.textContent=l.length+' элем.'+(s.length?' · выбрано: '+s.length+(s.some(x=>!x.dir)?' ('+fmtS(s.reduce((t,x)=>t+(x.dir?0:x.size),0))+')':''):'')+(clip?' · в буфере: '+clip.ids.length:'')}
+  function draw(){a.setTitle(q?'Поиск':nameOf(cur));bBack.disabled=hi<=0;bFwd.disabled=hi>=hist.length-1;bUp.disabled=cur==='root';drawAddr();drawCmd();drawNav();drawMain();drawStat();if(ov)drawOv()}
+  /* ---- просмотр и правка ---- */
+  async function drawOv(){root.querySelector('.fxov')&&root.querySelector('.fxov').remove();if(!ov)return;const it=byId(ov.id)||ov;ov=it;const m=it.mime||'',u=URL.createObjectURL(it.raw.blob);let body,ta=null;
+    if(m.startsWith('image/'))body=h('img',{src:u,alt:it.name});else if(m.startsWith('video/'))body=h('video',{src:u,controls:true,autoplay:true});
+    else if(m.startsWith('audio/'))body=h('div',{class:'fxaud'},ic('music_note'),h('b',{},it.name),h('audio',{src:u,controls:true,autoplay:true}));else if(ext(it.name)==='pdf')body=h('iframe',{src:u,title:it.name});
+    else{ta=h('textarea',{class:'fxta',spellcheck:'false','aria-label':it.name});ta.value=await it.raw.blob.text();body=ta}
+    const closeOv=()=>{URL.revokeObjectURL(u);ov=null;const e=root.querySelector('.fxov');if(e)e.remove();root.focus()};
+    const sib=sorted(list()).filter(x=>!x.dir&&((x.mime||'').startsWith('image/')||(x.mime||'').startsWith('video/')||(x.mime||'').startsWith('audio/'))),k=sib.findIndex(x=>x.id===it.id),step=d=>{if(sib.length<2)return;URL.revokeObjectURL(u);ov=sib[(k+d+sib.length)%sib.length];drawOv()};
+    const el=h('div',{class:'fxov',tabindex:'-1'},h('div',{class:'fxoh'},h('b',{},it.name),h('span',{class:'fxsp'}),ta&&it.src==='files'?cb('save','Сохранить',async()=>{const b=new Blob([ta.value],{type:it.mime||'text/plain'});await DB.put('files',{...it.raw,blob:b,size:b.size,t:Date.now()});toast('Сохранено','save');await load()}):null,k>=0&&sib.length>1?[cb('chevron_left','',()=>step(-1)),cb('chevron_right','',()=>step(1))]:null,cb('download','Скачать',()=>dl(it)),cb('close','',closeOv)),h('div',{class:'fxob'},body));
+    el.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')closeOv();else if(!ta&&e.key==='ArrowLeft')step(-1);else if(!ta&&e.key==='ArrowRight')step(1)});root.append(el);if(!ta)el.focus()}
+  /* ---- общие события ---- */
+  main.addEventListener('click',()=>{if(sel.size){sel.clear();drawMain();drawCmd();drawStat()}});
+  main.addEventListener('contextmenu',e=>{e.preventDefault();bgMenu(e.clientX,e.clientY)});
+  main.addEventListener('dragover',e=>{if(canWrite()){e.preventDefault();main.classList.add('drop')}});main.addEventListener('dragleave',e=>{if(e.target===main)main.classList.remove('drop')});
+  main.addEventListener('drop',async e=>{e.preventDefault();main.classList.remove('drop');if(!canWrite())return;const fl=[...(e.dataTransfer.files||[])];if(fl.length)return upload(fl);const ids=(e.dataTransfer.getData('text/x-fx')||'').split('\n').filter(Boolean);if(ids.length)await putInto(ids,cur,!e.ctrlKey)});
+  root.addEventListener('keydown',e=>{if(e.target.matches&&e.target.matches('input,textarea'))return;const c=e.ctrlKey||e.metaKey,its=selItems().filter(x=>!x.sys);
+    if(c&&e.key.toLowerCase()==='a'){e.preventDefault();sel=new Set(list().map(x=>x.id));drawMain();drawCmd();drawStat()}
+    else if(c&&e.key.toLowerCase()==='c'&&its.length){clip={cut:false,ids:its.map(x=>x.id)};toast('Скопировано','content_copy')}
+    else if(c&&e.key.toLowerCase()==='x'&&its.length){clip={cut:true,ids:its.map(x=>x.id)};draw()}
+    else if(c&&e.key.toLowerCase()==='v'){e.preventDefault();paste()}
+    else if(c&&e.shiftKey&&e.key.toLowerCase()==='n'){e.preventDefault();mk(true)}
+    else if(e.key==='Delete'&&its.length){e.preventDefault();del(e.shiftKey)}
+    else if(e.key==='F2'&&its.length===1){e.preventDefault();ren=its[0].id;drawMain()}
+    else if(e.key==='F5'){e.preventDefault();load()}
+    else if(e.key==='Enter'&&selItems().length===1)open(selItems()[0]);
+    else if(e.key==='Backspace'||(e.altKey&&e.key==='ArrowLeft')){e.preventDefault();back()||up()}
+    else if(e.altKey&&e.key==='ArrowRight')fwd();else if(e.altKey&&e.key==='ArrowUp')up();
+    else if(e.key==='Escape'&&sel.size){sel.clear();drawMain();drawCmd();drawStat()}});
+  load();
+  return{canBack:()=>hi>0,back};
 }
 
 /* Настройки */
@@ -3773,7 +3959,7 @@ function settingsApp(a){
 
 
 /* ---------- хранилище, камера, фонарик ---------- */
-const DB=(()=>{let p;const open=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open('alfa',2);r.onupgradeneeded=()=>{const d=r.result;['photos','music','sounds'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'})})};r.onsuccess=()=>{const d=r.result;d.onversionchange=()=>{try{d.close()}catch(e){}};res(d)};r.onerror=()=>rej(r.error)}));
+const DB=(()=>{let p;const open=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open('alfa',3);r.onupgradeneeded=()=>{const d=r.result;['photos','music','sounds','files'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'})})};r.onsuccess=()=>{const d=r.result;d.onversionchange=()=>{try{d.close()}catch(e){}};res(d)};r.onerror=()=>rej(r.error)}));
   const tx=async(s,m,f)=>{const d=await open();return new Promise((res,rej)=>{const t=d.transaction(s,m),o=f(t.objectStore(s));t.oncomplete=()=>res(o&&o.result);t.onerror=()=>rej(t.error)})};
   return{all:s=>tx(s,'readonly',o=>o.getAll()),put:(s,v)=>tx(s,'readwrite',o=>o.put(v)),del:(s,k)=>tx(s,'readwrite',o=>o.delete(k))}})();
 const flashSubs=new Set();
@@ -4833,7 +5019,7 @@ def('calendar','Календарь','calendar_month','t',2,[520,640],calendarApp
 def('snake','Змейка','sports_esports','s',3,[560,680],snakeApp);
 def('piano','Пианино','music_note','p',1,[900,440],pianoApp);
 def('draw','Рисование','brush','t',0,[900,640],drawApp);
-def('files','Файлы','folder','s',1,[760,580],filesApp);
+def('files','Файлы','folder','s',1,[1020,640],filesApp);
 def('notes','Заметки','edit_note','t',3,[560,640],notesApp);
 function g2048App(a){const N=4;let g,score=0,best=store.get('g2048',0);
   const sc=h('b',{},'0'),bs=h('b',{},String(best)),board=h('div',{class:'g48'});
@@ -5902,6 +6088,7 @@ function openApp(id,from){
 
 /* ---------- рабочий стол ---------- */
 const q=$('#q'),grid=$('#grid'),dock=$('#dock');
+let DSK=(()=>{const v=store.get('dpos',{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{}})();
 let edit=false,dragging=false,drawerOpen=false,dragEndT=-1e9;
 const spring='cubic-bezier(.34,1.56,.64,1)';
 function saveL(){const ids=c=>[...c.children].filter(x=>x.dataset&&x.dataset.id).map(x=>x.dataset.id);if(q.value.trim()){store.set('layout',L);return}if(desk){const pr=new Set(ids(grid));L.pages=L.pages.map(p=>p.filter(x=>pr.has(x)||(isW(x)&&wgInfo(x).t!=='folder')||(!isW(x)&&APPS[x]&&!avail(x))))}else{const hid=L.grid.filter(x=>!isW(x)&&APPS[x]&&!avail(x)),cur=ids(grid);while(cur.length&&/^w:gap:/.test(cur[cur.length-1]))cur.pop();L.grid=cur.concat(hid.filter(x=>!cur.includes(x)))}L.dock=ids(dock);if(L.dock.length>4)L.grid.push(...L.dock.splice(4));store.set('layout',L)}
@@ -6234,7 +6421,7 @@ $('#padd').addEventListener('click',addPage);$('#pdel').addEventListener('click'
 renderDots();
 function drawerBtn(){const s=h('span',{class:'ai tone-t'});s.dataset.ia='drawer';s.dataset.is=2;icnStyle(s);s.append(ic('apps'));return h('button',{class:'tile dbtn','aria-label':'Все приложения',onclick:openDrawer},s)}
 function renderGrid(){const v=q.value.trim().toLowerCase();const list=(v?ALL.filter(i=>APPS[i].name.toLowerCase().includes(v)):(desk?[...new Set(L.pages.flat())]:L.grid)).filter(i=>isW(i)?(!desk||wgInfo(i).t==='folder'):avail(i));
-  grid.replaceChildren(...(list.length?list.map(i=>isW(i)?wtile(i):tile(i,!v)):[h('div',{class:'empty'},ic(v?'search_off':'apps'),v?'Ничего не найдено':(L.pages.length>1?'Страница пуста. Перетащите сюда значки или добавьте виджет':'Рабочий стол пуст. Откройте меню приложений'))]));dock.hidden=!!v;fitGrid();try{renderDots()}catch(e){}}
+  grid.replaceChildren(...(list.length?list.map(i=>isW(i)?wtile(i):tile(i,!v)):[h('div',{class:'empty'},ic(v?'search_off':'apps'),v?'Ничего не найдено':(L.pages.length>1?'Страница пуста. Перетащите сюда значки или добавьте виджет':'Рабочий стол пуст. Откройте меню приложений'))]));dock.hidden=!!v;if(desk&&!v)deskApplyPos();fitGrid();try{renderDots()}catch(e){}}
 function renderDock(){dock.replaceChildren(...L.dock.slice(0,4).map(i=>{const b=tile(i,false);b._lpMenu=()=>dockMenu(b,i);bindDrag(b);return b}),drawerBtn());try{fitDock()}catch(_){}}
 function fitDock(){if(desk){dock.style.removeProperty('--dki');return}const hm=$('#home'),cs=getComputedStyle(hm),w=hm.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),ds=getComputedStyle(dock),n=Math.max(1,dock.querySelectorAll('.tile').length),gap=parseFloat(ds.columnGap)||10,pd=(parseFloat(ds.paddingLeft)||0)+(parseFloat(ds.paddingRight)||0);
   dock.style.setProperty('--dki',Math.max(38,Math.min(64,Math.floor((w-pd-gap*(n-1)-n*4-2)/n)))+'px')}
@@ -6709,6 +6896,12 @@ function lkOpen(tab){if($('#lked'))return;if(!locked){lockNow();setTimeout(()=>{
   const ed=h('div',{id:'lked',role:'dialog','aria-label':'Редактор экрана блокировки'},h('div',{class:'lkh'},seg,h('button',{class:'btn',onclick:lkClose},'Готово')),body);
   os.append(ed);os.append(h('button',{id:'lkx','aria-label':'Закрыть редактор',onclick:lkClose},ic('close')));lock.classList.add('lked-on');lock._lkTab=k=>{cur=k;draw()};draw();ed.animate([{translate:'0 100%',opacity:0},{offset:.35,opacity:1},{translate:'0 0',opacity:1}],{duration:640,easing:'cubic-bezier(.32,.72,0,1)'});const xb=$('#lkx');if(xb)xb.animate([{opacity:0,scale:.6},{opacity:1,scale:1}],{duration:480,delay:120,easing:'cubic-bezier(.32,.72,0,1)',fill:'backwards'})}
 lock.addEventListener('pointerdown',e=>{if(!lock.classList.contains('lked-on'))return;e.stopImmediatePropagation();const t=e.target;if(lock._lkTab)lock._lkTab(t.closest('#lclock')?'clock':t.closest('#ldate,#lmsg')?'more':'bg')},true);
+/* ПК: редактор часов экрана блокировки — кнопка и правый клик (долгое нажатие тоже работает) */
+{const b=h('button',{id:'lkbtn',type:'button','aria-label':'Изменить часы и экран блокировки'},ic('edit'),'Изменить часы');
+ ['pointerdown','pointerup','click','dblclick'].forEach(t=>b.addEventListener(t,e=>e.stopPropagation()));
+ b.addEventListener('click',()=>{ly0=null;lkOpen('clock')});lock.append(b);
+ lock.addEventListener('contextmenu',e=>{if(!desk||lock.classList.contains('lked-on'))return;e.preventDefault();e.stopPropagation();ly0=null;lkOpen('clock')})}
+
 {let t=0,sx=0,sy=0;lock.addEventListener('pointerdown',e=>{if(lock.classList.contains('lked-on')||e.target.closest('#lsc,#lnotes,button'))return;sx=e.clientX;sy=e.clientY;clearTimeout(t);t=setTimeout(()=>{ly0=null;lkOpen('clock')},650)});
   lock.addEventListener('pointermove',e=>{if(Math.hypot(e.clientX-sx,e.clientY-sy)>10)clearTimeout(t)});['pointerup','pointercancel'].forEach(n=>lock.addEventListener(n,()=>clearTimeout(t)))}
 
@@ -6893,10 +7086,10 @@ function tbPlace(id,idx,pin){const ids=tbIds().filter(x=>x!==id);ids.splice(Math
 function tbUnpin(id){TBP=TBP.filter(x=>x!==id);saveTB();tbRender(true);toast('Откреплено от панели задач','keep_off')}
 setInterval(()=>{if(desk&&!dragging&&!document.hidden)tbRender()},200);
 function deskSel(b){grid.querySelectorAll('.tile.sel').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}
-function detach(id){L.pages=L.pages.map(p=>p.filter(x=>x!==id));Object.values(FD).forEach(f=>{if(f&&f.a)f.a=f.a.filter(x=>x!==id)});saveFD()}
+function detach(id){delete DSK[id];try{store.set('dpos',DSK)}catch(e){}L.pages=L.pages.map(p=>p.filter(x=>x!==id));Object.values(FD).forEach(f=>{if(f&&f.a)f.a=f.a.filter(x=>x!==id)});saveFD()}
 function deskMerge(sid,tid){if(isW(sid)||sid===tid)return;
   if(isW(tid)){const f=FD[wgInfo(tid).u];if(!f)return;if(!f.a.includes(sid))f.a.push(sid);saveFD();toast('Добавлено в папку «'+(f.n||'Папка')+'»','folder')}
-  else{const u=Date.now().toString(36),k=L.grid.indexOf(tid);if(k<0)return;FD[u]={n:'Папка',a:[tid,sid]};L.grid[k]='w:folder:1x1:'+u;saveFD();toast('Папка создана','create_new_folder')}
+  else{const u=Date.now().toString(36),k=L.grid.indexOf(tid);if(k<0)return;FD[u]={n:'Папка',a:[tid,sid]};const nid='w:folder:1x1:'+u;L.grid[k]=nid;if(DSK[tid]){DSK[nid]=DSK[tid];delete DSK[tid];try{store.set('dpos',DSK)}catch(e){}}saveFD();toast('Папка создана','create_new_folder')}
   store.set('layout',L);renderGrid()}
 function hitAt(x,y,id){const top=document.elementsFromPoint(x,y)[0];if(!top||!top.closest)return null;
   if(top.closest('#taskbar,#status')){if(isW(id))return null;const bs=[...document.querySelectorAll('#tbapps .tb-app')].filter(b=>b.dataset.app!==id);let idx=bs.length;for(let i=0;i<bs.length;i++){const r=bs[i].getBoundingClientRect();if(x<r.left+r.width/2){idx=i;break}}return{t:'tb',idx}}
@@ -6905,18 +7098,33 @@ function hitAt(x,y,id){const top=document.elementsFromPoint(x,y)[0];if(!top||!to
     return{t:'tile',el:tl,merge:inC&&!isW(id)&&(!isW(tid)||tid.startsWith('w:folder:')),after:y>r.top+r.height/2}}
   if(top.closest('#home'))return{t:'desk'};
   return null}
+/* --- свободное размещение иконок на рабочем столе ПК (ячейки 96px, как на телефоне — в любую пустую ячейку) --- */
+const DCELL=96;
+function deskGeom(){const g=$('#grid');return{g,C:Math.max(1,Math.floor((g.clientWidth+4)/DCELL)),R:Math.max(1,Math.floor((g.clientHeight+4)/DCELL))}}
+function deskCellAt(x,y){const g=$('#grid'),r=g.getBoundingClientRect();return[Math.max(0,Math.floor((x-r.left+g.scrollLeft)/DCELL)),Math.max(0,Math.floor((y-r.top+g.scrollTop)/DCELL))]}
+function deskOcc(skip){const g=$('#grid'),gr=g.getBoundingClientRect(),o=new Set();[...g.children].forEach(t=>{const i=t.dataset&&t.dataset.id;if(!i||i===skip)return;const r=t.getBoundingClientRect();o.add(Math.round((r.left-gr.left+g.scrollLeft)/DCELL)+','+Math.round((r.top-gr.top+g.scrollTop)/DCELL))});return o}
+function deskFree(c,r,occ){const G=deskGeom();let mc=G.C;occ.forEach(k=>{mc=Math.max(mc,+k.split(',')[0]+1)});c=Math.min(c,G.C-1);r=Math.min(r,G.R-1);if(!occ.has(c+','+r))return[c,r];let best=null,bd=1e9;
+  for(let cc=0;cc<mc+2;cc++)for(let rr=0;rr<G.R;rr++){if(occ.has(cc+','+rr))continue;const d=Math.abs(cc-c)*1.01+Math.abs(rr-r);if(d<bd){bd=d;best=[cc,rr]}}return best||[mc,0]}
+function deskFreeze(){const g=$('#grid'),gr=g.getBoundingClientRect();DSK={};[...g.children].forEach(t=>{const i=t.dataset&&t.dataset.id;if(!i)return;const r=t.getBoundingClientRect();DSK[i]=[Math.max(0,Math.round((r.left-gr.left+g.scrollLeft)/DCELL)),Math.max(0,Math.round((r.top-gr.top+g.scrollTop)/DCELL))]})}
+function deskApplyPos(){if(!desk)return;[...grid.children].forEach(t=>{const i=t.dataset&&t.dataset.id,p=i&&DSK[i];if(p){t.style.gridColumnStart=p[0]+1;t.style.gridRowStart=p[1]+1}})}
+let _dind=null;
+function deskInd(id,fc){if(!fc){if(_dind){_dind.remove();_dind=null}return}
+  const c=deskFree(...deskCellAt(fc[0],fc[1]),deskOcc(id)),g=$('#grid'),r=g.getBoundingClientRect();
+  if(!_dind){_dind=h('div',{class:'dind'});document.body.append(_dind)}
+  _dind.style.cssText='left:'+(r.left-g.scrollLeft+c[0]*DCELL)+'px;top:'+(r.top-g.scrollTop+c[1]*DCELL)+'px;width:92px;height:92px'}
 function deskDrop(kind,id,hit){if(!hit||hit.t==='none')return;
   if(hit.t==='tb'){tbPlace(id,hit.idx,kind!=='t');return}
-  if(hit.t==='tile'){const tid=hit.el.dataset.id;
-    if(hit.merge){detach(id);deskMerge(id,tid);return}
-    detach(id);const k=L.grid.indexOf(tid);if(k<0)L.grid.push(id);else L.grid.splice(k+(hit.after?1:0),0,id)}
-  else if(hit.t==='desk'){detach(id);L.grid.push(id)}
-  store.set('layout',L);renderGrid()}
+  if(hit.t==='tile'&&hit.merge){deskFreeze();const tid=hit.el.dataset.id;detach(id);deskMerge(id,tid);return}
+  if(hit.t==='tile'||hit.t==='desk'){
+    const fc=window._fc||[innerWidth/2,innerHeight/2],occ=deskOcc(id),cell=deskFree(...deskCellAt(fc[0],fc[1]),occ);
+    deskFreeze();detach(id);if(!L.grid.includes(id))L.grid.push(id);
+    deskFreeze();DSK[id]=cell;try{store.set('dpos',DSK)}catch(e){}
+    store.set('layout',L);renderGrid()}}
 function deskDrag(el,getId,kind){
   el.addEventListener('pointerdown',e=>{
     if(!desk||e.button!==0)return;
     const id=getId(),sx=e.clientX,sy=e.clientY;let on=false,fly=null,ox=0,oy=0,mh=null;
-    const clr=()=>{if(mh){mh.classList.remove('mrg');mh=null}$('#tbapps').classList.remove('dropt')};
+    const clr=()=>{if(mh){mh.classList.remove('mrg');mh=null}$('#tbapps').classList.remove('dropt');deskInd(id,null)};
     const mv=ev=>{
       if(!on){
         if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<7)return;
@@ -6928,10 +7136,11 @@ function deskDrag(el,getId,kind){
       fly.style.left=(ev.clientX-ox)+'px';fly.style.top=(ev.clientY-oy)+'px';
       clr();const hit=hitAt(ev.clientX,ev.clientY,id);
       if(hit&&hit.t==='tile'&&hit.merge){mh=hit.el;mh.classList.add('mrg')}
-      if(hit&&hit.t==='tb')$('#tbapps').classList.add('dropt')};
+      if(hit&&hit.t==='tb')$('#tbapps').classList.add('dropt');
+      if(hit&&(hit.t==='desk'||(hit.t==='tile'&&!hit.merge)))deskInd(id,[ev.clientX-ox+46,ev.clientY-oy+46])};
     const up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);clr();
       if(!on)return;dragging=false;const hit=ev.type==='pointercancel'?null:hitAt(ev.clientX,ev.clientY,id);
-      fly.remove();el.classList.remove('ghost');setTimeout(()=>{el._sup=0},80);deskDrop(kind,id,hit)};
+      fly.remove();el.classList.remove('ghost');setTimeout(()=>{el._sup=0},80);window._fc=[ev.clientX-ox+46,ev.clientY-oy+46];deskDrop(kind,id,hit)};
     addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up)})}
 function ctx(x,y,items,up){closeMenu();
   const m=h('div',{class:'menu',role:'menu'},items.filter(Boolean).map(it=>h('button',{class:'li',onclick:()=>{closeMenu();it.fn()}},ic(it.i),it.t)));
@@ -8062,6 +8271,7 @@ async function wcDel(i,done){const id=i-100;try{await wcIO('readwrite',s=>s.dele
   ['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,rel,{passive:true,capture:true}));
   document.addEventListener('scroll',()=>{if(cur){const el=cur;cur=null;el.classList.remove('pr')}},{passive:true,capture:true});
 })();
+
 
 
 </script>

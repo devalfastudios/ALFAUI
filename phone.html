@@ -3773,7 +3773,7 @@ function settingsApp(a){
 
 
 /* ---------- хранилище, камера, фонарик ---------- */
-const DB=(()=>{let p;const open=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open('alfa',2);r.onupgradeneeded=()=>{const d=r.result;['photos','music','sounds'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'})})};r.onsuccess=()=>{const d=r.result;d.onversionchange=()=>{try{d.close()}catch(e){}};res(d)};r.onerror=()=>rej(r.error)}));
+const DB=(()=>{let p;const open=()=>p||(p=new Promise((res,rej)=>{const r=indexedDB.open('alfa',3);r.onupgradeneeded=()=>{const d=r.result;['photos','music','sounds','files'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'})})};r.onsuccess=()=>{const d=r.result;d.onversionchange=()=>{try{d.close()}catch(e){}};res(d)};r.onerror=()=>rej(r.error)}));
   const tx=async(s,m,f)=>{const d=await open();return new Promise((res,rej)=>{const t=d.transaction(s,m),o=f(t.objectStore(s));t.oncomplete=()=>res(o&&o.result);t.onerror=()=>rej(t.error)})};
   return{all:s=>tx(s,'readonly',o=>o.getAll()),put:(s,v)=>tx(s,'readwrite',o=>o.put(v)),del:(s,k)=>tx(s,'readwrite',o=>o.delete(k))}})();
 const flashSubs=new Set();
