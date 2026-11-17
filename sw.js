@@ -5,9 +5,11 @@
    · шрифты и Leaflet (карты) — кэш + фоновое обновление, всё нужное скачивается при установке;
    · API, радио, тайлы карт, прокси браузера — напрямую в сеть (в кэш не попадают).
    Чтобы выпустить новую версию, достаточно изменить VERSION. */
-const VERSION='0.5.0';
+const VERSION='0.6.19';
 const CORE='alfa-os-core-'+VERSION, RT='alfa-os-rt';
 const INDEX=new URL('index.html',self.registration.scope).href;
+const XFILES=['rootaos-site.html','rootaos-app.html'];   // сайт и приложение Root AOs
+const isX=u=>XFILES.some(n=>u.pathname.endsWith('/'+n));
 const CORE_ASSETS=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&family=Outfit:wght@300..700&family=Figtree:wght@400..700&display=swap';
 const EXTRA=['https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css','https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js'];
@@ -15,6 +17,7 @@ const HOSTS=['fonts.googleapis.com','fonts.gstatic.com','cdnjs.cloudflare.com'];
 
 self.addEventListener('install',e=>{e.waitUntil((async()=>{
   const core=await caches.open(CORE);await core.addAll(CORE_ASSETS.map(u=>new Request(u,{cache:'reload'})));
+  await Promise.allSettled(XFILES.map(n=>core.add(new Request(n,{cache:'reload'}))));   // если файлов нет — установка всё равно успешна
   /* внешние ресурсы — по возможности: если их не удалось скачать, установка всё равно успешна */
   const rt=await caches.open(RT);
   await Promise.allSettled(EXTRA.map(async u=>{const r=await fetch(u);if(r.ok)await rt.put(u,r)}));
@@ -48,7 +51,7 @@ async function swr(e,name){
 self.addEventListener('fetch',e=>{
   const r=e.request;if(r.method!=='GET'||r.headers.has('range'))return;   // потоковое аудио/видео не трогаем
   const u=new URL(r.url);
-  if(r.mode==='navigate'&&u.origin===location.origin){e.respondWith(nav(r));return}
+  if(r.mode==='navigate'&&u.origin===location.origin){if(isX(u)){e.respondWith(swr(e,CORE));return}e.respondWith(nav(r));return}
   if(u.origin===location.origin){e.respondWith(swr(e,CORE));return}
   if(HOSTS.includes(u.hostname)){e.respondWith(swr(e,RT));return}
 });

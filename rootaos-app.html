@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Root AOs</title>
+<style>
+:root{--h:270;
+  --bg:hsl(var(--h) 24% 8%);--s1:hsl(var(--h) 20% 12%);--s2:hsl(var(--h) 18% 16%);--s3:hsl(var(--h) 16% 21%);
+  --tx:hsl(var(--h) 30% 94%);--tx2:hsl(var(--h) 14% 68%);--line:hsl(var(--h) 16% 25%);
+  --ac:hsl(var(--h) 92% 74%);--onac:hsl(var(--h) 60% 12%);--ac2:hsl(calc(var(--h) + 150) 80% 68%);
+  --ok:#5be3a2;--err:#ff6b7a;--warn:#ffc063;--code:#0a0912;color-scheme:dark}
+[data-theme=light]{--bg:hsl(var(--h) 45% 97%);--s1:#fff;--s2:hsl(var(--h) 45% 94%);--s3:hsl(var(--h) 35% 89%);
+  --tx:hsl(var(--h) 40% 12%);--tx2:hsl(var(--h) 14% 40%);--line:hsl(var(--h) 22% 84%);
+  --ac:hsl(var(--h) 72% 48%);--onac:#fff;--ac2:hsl(calc(var(--h) + 150) 70% 36%);--ok:#12975f;--err:#d33a4c;--warn:#b86e00;--code:#f0eefc;color-scheme:light}
+/* --nb: запас снизу под плавающие кнопки навигации Android */
+:root{--nb:0px}   /* отступ под кнопки навигации теперь задаёт сама система (iframe заканчивается над ними) */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+#app{height:100%;display:flex;flex-direction:column;position:relative}
+.scroll{overflow:auto;-webkit-overflow-scrolling:touch}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------- splash ---------- */
+.splash{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;text-align:center;
+  background:radial-gradient(520px 320px at 50% 22%,color-mix(in oklab,var(--ac) 22%,transparent),transparent 70%)}
+.sp-ring{position:relative;width:104px;height:104px}
+.sp-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.sp-ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.sp-ring .bg{stroke:var(--s3)}.sp-ring .fg{stroke:var(--ac);stroke-dasharray:289;stroke-dashoffset:289}
+.sp-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:40px}
+.ic{display:inline-grid;place-items:center;line-height:0}.ic svg{width:1em;height:1em}
+.splash h1{font-size:28px;letter-spacing:-.01em}
+.splash .sub{color:var(--tx2);font-size:13px;margin-top:-10px}
+.chk{width:min(360px,100%);text-align:left;font:12.5px/1.9 ui-monospace,Menlo,Consolas,monospace;color:var(--tx2);min-height:96px}
+.chk div{opacity:0;transform:translateY(4px);transition:.25s}.chk div.on{opacity:1;transform:none}
+.chk .ok{color:var(--ok)}.chk .bad{color:var(--err)}.chk .wr{color:var(--warn)}
+.sp-bar{width:min(360px,100%);height:5px;border-radius:3px;background:var(--s3);overflow:hidden}
+.sp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2))}
+
+/* ---------- common ---------- */
+.btn{appearance:none;border:0;cursor:pointer;padding:12px 18px;border-radius:999px;background:var(--ac);color:var(--onac);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s,filter .12s}
+.btn:active{transform:scale(.97)}.btn:hover{filter:brightness(1.07)}
+.btn.t{background:var(--s3);color:var(--tx)}.btn.d{background:var(--err);color:#fff}.btn.sm{padding:8px 14px;font-size:13px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--s3);color:var(--tx2);white-space:nowrap}
+.chip.ok{background:color-mix(in oklab,var(--ok) 18%,var(--s2));color:var(--ok)}
+.chip.bad{background:color-mix(in oklab,var(--err) 18%,var(--s2));color:var(--err)}
+.chip.wr{background:color-mix(in oklab,var(--warn) 18%,var(--s2));color:var(--warn)}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:14px 16px}
+.card+.card{margin-top:10px}
+.card h3{font-size:15px;margin-bottom:4px}.card p{color:var(--tx2);font-size:13.5px}
+.sec{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin:18px 4px 8px;font-weight:700}
+.row{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:16px;background:var(--s1);border:1px solid var(--line);margin-bottom:8px;min-height:56px}
+.row.click{cursor:pointer}.row.click:active{background:var(--s2)}
+.row .e{flex:none;width:38px;height:38px;border-radius:12px;background:var(--s3);display:grid;place-items:center;font-size:20px}
+.row .tt{flex:1;min-width:0}.row .tt b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tt small{display:block;color:var(--tx2);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw{position:relative;flex:none;width:46px;height:28px;display:inline-block}
+.sw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.sw i{position:absolute;inset:0;border-radius:14px;background:var(--s3);transition:.2s}
+.sw i:after{content:"";position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--tx2);transition:.2s}
+.sw input:checked+i{background:var(--ac)}.sw input:checked+i:after{left:22px;background:var(--onac)}
+input[type=text],input[type=search],input[type=number],textarea,select{width:100%;background:var(--s2);border:1px solid var(--line);border-radius:14px;padding:11px 13px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--ac)}
+textarea{resize:vertical;min-height:90px}
+input[type=range]{width:100%;accent-color:var(--ac);height:30px}
+input[type=color]{width:46px;height:38px;border:0;background:none;padding:0}
+label.f{display:block;font-size:12.5px;color:var(--tx2);margin:12px 2px 6px;font-weight:600}
+.seg{display:flex;gap:4px;background:var(--s2);padding:4px;border-radius:999px;border:1px solid var(--line)}
+.seg button{flex:1;border:0;background:transparent;padding:8px 10px;border-radius:999px;font-size:13px;font-weight:600;color:var(--tx2);cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--ac);color:var(--onac)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:13.5px}
+.kv span:nth-child(odd){color:var(--tx2)}.kv span:nth-child(even){text-align:right;font-weight:600;word-break:break-word}
+.empty{text-align:center;color:var(--tx2);padding:28px 10px;font-size:14px}
+.snack{position:absolute;left:50%;bottom:calc(86px + var(--nb));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:14px;font-weight:600;font-size:13.5px;z-index:50;max-width:88%;text-align:center;box-shadow:0 8px 30px #0006;animation:sn .25s}
+@keyframes sn{from{opacity:0;transform:translate(-50%,10px)}}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fd .2s}
+@keyframes fd{from{opacity:0}}
+.sheet{width:min(560px,100%);background:var(--s1);border-radius:26px 26px 0 0;padding:20px 18px calc(18px + var(--nb) + env(safe-area-inset-bottom));animation:up .25s;max-height:88%;overflow:auto}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h3{font-size:18px;margin-bottom:8px}.sheet p{color:var(--tx2);margin-bottom:6px}
+.ck{display:flex;gap:10px;align-items:flex-start;margin:12px 0;cursor:pointer;font-size:14px}.ck input{margin-top:3px;accent-color:var(--ac);width:18px;height:18px}
+
+/* ---------- gate ---------- */
+.gate{flex:1;overflow:auto;padding:26px 20px calc(26px + var(--nb) + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.gate .big{width:112px;height:112px;border-radius:36px;display:grid;place-items:center;font-size:54px;background:var(--s2);border:1px solid var(--line)}
+.gate .big.bad{background:color-mix(in oklab,var(--err) 16%,var(--s2))}.gate .big.wr{background:color-mix(in oklab,var(--warn) 16%,var(--s2))}
+.gate h2{font-size:24px}
+@media (max-height:820px){.gate{padding-top:18px;gap:10px}.gate .big{width:76px;height:76px;border-radius:26px;font-size:38px}.gate h2{font-size:21px}}.gate p{color:var(--tx2);max-width:420px}
+.list{width:min(420px,100%);text-align:left;display:grid;gap:8px;margin-top:6px}
+.list .ln{display:flex;gap:10px;align-items:flex-start;background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:10px 12px;font-size:14px}
+.list .ln i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--s3);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700}
+
+/* ---------- main ---------- */
+.hd{flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
+.hd .ttl{font-size:20px;font-weight:800;letter-spacing:-.01em;flex:1;display:flex;align-items:baseline;gap:8px}.hd .ttl small{font-size:12px;color:var(--tx2);font-weight:600}
+.bd{flex:1;min-height:0;overflow:auto;padding:12px 14px calc(18px + var(--nb))}
+.tabs{flex:none;display:flex;gap:6px;padding:8px 10px calc(8px + var(--nb) + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
+.tabs button{flex:1;border:0;background:transparent;border-radius:16px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:600;color:var(--tx2);cursor:pointer}
+.tabs button i{font-style:normal;font-size:20px}.tabs button.on{background:var(--s3);color:var(--tx)}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{border:1px solid var(--line);background:var(--s1);border-radius:20px;padding:13px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:104px;transition:transform .12s,background .12s}
+.tile:active{transform:scale(.97);background:var(--s2)}
+.tile i{font-style:normal;font-size:22px;width:40px;height:40px;border-radius:13px;background:var(--s3);display:grid;place-items:center}
+.tile b{font-size:14px;line-height:1.2}.tile small{font-size:12px;color:var(--tx2);line-height:1.3}
+.cats{display:flex;gap:6px;overflow:auto;padding:2px 0 10px;scrollbar-width:none}.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:1px solid var(--line);background:var(--s1);padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--tx2);cursor:pointer}
+.cats button.on{background:var(--ac);color:var(--onac);border-color:transparent}
+.pg{display:flex;flex-direction:column;height:100%}
+.pg .ph{flex:none;display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.pg .ph button{width:40px;height:40px;border-radius:50%;border:0;background:var(--s3);font-size:18px;cursor:pointer}
+.pg .ph b{font-size:17px}.pg .ph small{display:block;color:var(--tx2);font-size:12px}
+.pg .pb{flex:1;min-height:0;overflow:auto;padding:12px 14px 22px}
+
+/* ---------- terminal / logs ---------- */
+.term{background:var(--code);border:1px solid var(--line);border-radius:16px;padding:10px 12px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;height:48vh;min-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.term .p{color:var(--ac)}.term .e{color:var(--err)}.term .d{color:var(--tx2)}
+.tin{display:flex;gap:8px;margin-top:8px}.tin input{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chips button{border:1px solid var(--line);background:var(--s2);border-radius:999px;padding:5px 10px;font:12px ui-monospace,Menlo,monospace;color:var(--tx2);cursor:pointer}
+.lg{font:11.5px/1.45 ui-monospace,Menlo,Consolas,monospace}
+.lg div{white-space:pre-wrap;word-break:break-word}
+.lg .I{color:var(--tx)}.lg .W{color:var(--warn)}.lg .E{color:var(--err)}.lg .t{color:var(--tx2)}
+.meter{height:12px;border-radius:6px;background:var(--s3);overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--ac2),var(--ac));transition:width .5s}
+table.ps{width:100%;border-collapse:collapse;font-size:12.5px}
+table.ps th{color:var(--tx2);text-align:left;font-weight:600;padding:4px 6px}table.ps td{padding:7px 6px;border-top:1px solid var(--line)}
+table.ps td:last-child{text-align:right}
+.big-n{font-size:40px;font-weight:800;letter-spacing:-.02em}
+.prev{height:96px;border-radius:18px;border:1px solid var(--line);margin:8px 0}
+.icg{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+.icg button{aspect-ratio:1;border-radius:14px;border:2px solid transparent;background:var(--s2);font-size:22px;cursor:pointer}
+.icg button.on{border-color:var(--ac);background:var(--s3)}
+.tones{display:flex;gap:10px}.tones button{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer}.tones button.on{border-color:var(--tx)}
+.ed{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;min-height:240px;white-space:pre;tab-size:2;background:var(--code)}
+iframe.pv{width:100%;height:340px;border:1px solid var(--line);border-radius:16px;background:#fff;margin-top:10px}
+code.i{font:12.5px ui-monospace,Menlo,monospace;background:var(--s3);padding:1px 6px;border-radius:6px}
+pre.cd{font:12px/1.5 ui-monospace,Menlo,monospace;background:var(--code);border:1px solid var(--line);border-radius:14px;padding:10px 12px;overflow:auto;margin:6px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+'use strict';
+/* ================= helpers ================= */
+const $=(s,r)=>(r||document).querySelector(s);
+function h(tag,a,...kids){
+  const el=document.createElement(tag);
+  if(a)for(const k in a){const v=a[k];if(v==null||v===false)continue;
+    if(k==='class')el.className=v;
+    else if(k==='style')el.style.cssText=v;
+    else if(k==='html')el.innerHTML=v;
+    else if(k.slice(0,2)==='on'&&typeof v==='function')el.addEventListener(k.slice(2),v);
+    else if(k==='value'||k==='checked'||k==='disabled'||k==='selected')el[k]=v;
+    else el.setAttribute(k,v===true?'':v)}
+  const add=x=>{if(x==null||x===false)return;if(Array.isArray(x))x.forEach(add);else el.append(x.nodeType?x:document.createTextNode(String(x)))};
+  kids.forEach(add);return el}
+const app=$('#app');
+const view=el=>app.replaceChildren(el);
+/* ---------- иконки (SVG вместо эмодзи) ---------- */
+const IP={
+ lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ unlock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+ key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+ block:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+ bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ battery:'<rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2M6 10v4M10 10v4"/>',
+ wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><path d="M12 20h.01"/>',
+ plane:'<path d="M2 16l9-3V6a1.5 1.5 0 0 1 3 0v7l8 3v2l-8-2v4l2 2v1l-3.5-1L8 22v-1l2-2v-4l-8 2z"/>',
+ moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
+ term:'<path d="M4 17l6-6-6-6M12 19h8"/>',
+ doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
+ box:'<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+ flask:'<path d="M10 2v7.5L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2M8.5 2h7"/>',
+ palette:'<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.9 1.5-1.9-.3-1 .4-2.1 1.5-2.1H17a4 4 0 0 0 4-4c0-5-4-10-9-10z"/><path d="M7.5 11h.01M10 7.5h.01M15 8h.01"/>',
+ tool:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5L3 17.6V21h3.4l6.3-6.3a4 4 0 0 0 5-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+ refresh:'<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12A9 9 0 0 1 18.5 5.8L21 8M21 3v5h-5M3 21v-5h5"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/>',
+ tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><path d="M8 8h.01"/>',
+ save:'<path d="M5 3h11l4 4v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"/>',
+ puzzle:'<path d="M10 4a2 2 0 1 1 4 0v2h4v4h-2a2 2 0 1 0 0 4h2v4h-4v-2a2 2 0 1 0-4 0v2H6v-4h2a2 2 0 1 0 0-4H6V6h4z"/>',
+ touch:'<path d="M9 11V5a2 2 0 0 1 4 0v5M13 10V9a2 2 0 0 1 4 0v3a7 7 0 0 1-7 7c-3 0-4-2-6-5l-1-2a1.5 1.5 0 0 1 2.5-1.5L9 14"/>',
+ screen:'<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+ sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+ star:'<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.5 5.8 21l1.4-7L2 9.3l7-.8z"/>',
+ image:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 5 5 3-3 5 5M9 8h.01"/>',
+ music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+ home:'<path d="M3 11l9-8 9 8v10H3z"/><path d="M9 21v-6h6v6"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ play:'<path d="M6 4l14 8-14 8z"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6"/>',
+ book:'<path d="M4 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3"/><path d="M20 4v15h-6"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+ chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/>',
+ cam:'<path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/>',
+ dice:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01M12 12h.01"/>',
+ cup:'<path d="M5 8h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M8 2v3M12 2v3"/>',
+ broom:'<path d="M14 3l7 7M12 9l3 3M3 21l5-1 9-9-4-4-9 9z"/>',
+ leaf:'<path d="M5 21c0-9 5-16 16-17 0 10-6 16-14 16M5 21l8-8"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/>',
+ warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/>',
+ rocket:'<path d="M5 15c-1.5 1.3-2 5-2 5s3.7-.5 5-2M12 15l-3-3a22 22 0 0 1 2-4 12 12 0 0 1 11-5c0 3-1 7-5 11a22 22 0 0 1-4 2z"/><path d="M9 12H4s.5-3 2-4c1.6-1 5 0 5 0M12 15v5s3-.5 4-2c1-1.6 0-5 0-5"/>'
+};
+const IM={'⚠':'warn','🔒':'lock','🔓':'unlock','🛡':'shield','🔑':'key','🚫':'block','🛑':'block','⚡':'bolt','🔋':'battery','📶':'wifi','🔵':'wifi','✈':'plane','🌙':'moon','🔕':'moon','🔇':'moon','💤':'moon','⌨':'term','📟':'term','📄':'doc','📋':'doc','📜':'doc','🗒':'doc','📝':'edit','✏':'edit','📦':'box','🗂':'box','🧰':'box','🧪':'flask','🎨':'palette','🌈':'palette','🖼':'image','🎞':'image','🎚':'sliders','⚖':'sliders','🔧':'tool','🛠':'tool','🥾':'tool','🛟':'tool','🔄':'refresh','🔁':'refresh','📊':'chart','📈':'chart','🧮':'chart','❄':'snow','🏷':'tag','💾':'save','🔔':'bell','🧩':'puzzle','👆':'touch','🖥':'screen','🪟':'screen','⭐':'star','💎':'star','🎵':'music','🏠':'home','🌍':'globe','🌤':'sun','🔦':'sun','⏱':'clock','🛒':'cart','📚':'book','💡':'bulb','💬':'chat','📷':'cam','🎲':'dice','🎮':'dice','☕':'cup','🧹':'broom','🌿':'leaf','🚀':'rocket','▶':'play'};
+function ico(e){const k=IM[String(e||'').replace(/️/g,'')]||'sliders';const w=document.createElement('span');w.className='ic';w.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IP[k]+'</svg>';return w}
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg){const o=$('.snack');if(o)o.remove();const s=h('div',{class:'snack'},msg);app.append(s);setTimeout(()=>s.remove(),2300)}
+
+/* ================= bridge to ALFA OS ================= */
+let seq=0;const pend=new Map();let hasOS=false;try{hasOS=window.parent&&window.parent!==window}catch(e){}
+function P(m){const a=[].slice.call(arguments,1);
+  return new Promise((res,rej)=>{
+    if(!hasOS){rej(new Error('Откройте Root AOs внутри ALFA OS'));return}
+    const id=++seq;pend.set(id,{res,rej});
+    parent.postMessage({raos:1,id,m,a},'*');
+    setTimeout(()=>{if(pend.has(id)){pend.delete(id);rej(new Error('Нет ответа от системы'))}},25000)})}
+addEventListener('message',e=>{const d=e.data;if(!d||!d.raos)return;
+  if(d.ev){if(d.ev==='theme')applyTheme(d.v);return}
+  const p=pend.get(d.id);if(!p)return;pend.delete(d.id);d.ok?p.res(d.res):p.rej(new Error(d.err||'Ошибка'))});
+addEventListener('pointerdown',e=>{if(hasOS)parent.postMessage({raos:1,id:0,m:'tap',a:[e.clientX,e.clientY]},'*')},true);
+async function T(fn){try{return await fn()}catch(e){toast(e&&e.message||String(e));return undefined}}
+function applyTheme(t){if(!t)return;document.documentElement.style.setProperty('--h',t.hue);document.documentElement.dataset.theme=t.dark?'dark':'light'}
+
+/* ================= ui kit ================= */
+const chip=(t,c)=>h('span',{class:'chip '+(c||'')},t);
+function sw(val,fn){const i=h('input',{type:'checkbox',checked:!!val});i.addEventListener('change',()=>fn(i.checked,i));return h('label',{class:'sw'},i,h('i'))}
+function row(o){const el=h('div',{class:'row'+(o.on?' click':''),onclick:o.on||null},o.e?h('div',{class:'e'},ico(o.e)):null,h('div',{class:'tt'},h('b',{},o.t),o.d?h('small',{},o.d):null),o.r||null);return el}
+function btn(t,cls,fn){return h('button',{class:'btn '+(cls||''),type:'button',onclick:fn},t)}
+function rng(min,max,step,val,onin,onend){const r=h('input',{type:'range',min,max,step,value:val});r.addEventListener('input',()=>onin&&onin(+r.value));r.addEventListener('change',()=>onend&&onend(+r.value));return r}
+function seg(items,cur,fn){const box=h('div',{class:'seg'});const draw=()=>box.replaceChildren(...items.map(([k,t])=>h('button',{type:'button',class:k===cur?'on':'',onclick:()=>{cur=k;draw();fn(k)}},t)));draw();return box}
+function dlg(o){return new Promise(res=>{
+  const close=v=>{sc.remove();res(v)};
+  let ck=null;const body=[h('h3',{},o.title),o.text?h('p',{},o.text):null];
+  if(o.check){ck=h('input',{type:'checkbox'});body.push(h('label',{class:'ck'},ck,h('span',{},o.check)))}
+  if(o.input){var inp=h('input',{type:'text',value:o.input.value||'',placeholder:o.input.ph||''});body.push(inp)}
+  const ok=btn(o.ok||'ОК',o.danger?'d':'',()=>close(o.input?inp.value:true));
+  if(ck){ok.disabled=true;ck.addEventListener('change',()=>{ok.disabled=!ck.checked})}
+  const sc=h('div',{class:'scrim',onclick:e=>{if(e.target===sc)close(o.input?null:false)}},h('div',{class:'sheet'},...body,h('div',{class:'btns'},btn('Отмена','t',()=>close(o.input?null:false)),ok)));
+  app.append(sc);if(inp)setTimeout(()=>inp.focus(),60)})}
+function lines(a){return h('div',{class:'list'},...a.map(([n,t],i)=>h('div',{class:'ln'},h('i',{},n),h('span',{},t))))}
+
+/* ================= splash: проверка всегда 4 секунды ================= */
+let S=null;
+async function splash(){
+  const ring=h('div',{class:'sp-ring',html:'<svg viewBox="0 0 104 104"><circle class="bg" cx="52" cy="52" r="46"/><circle class="fg" cx="52" cy="52" r="46"/></svg><b>\u{1F6E1}\uFE0F</b>'}),log=h('div',{class:'chk'});
+  const fg=ring.querySelector('.fg');
+  const bar=h('i');
+  view(h('div',{class:'splash'},ring,h('h1',{},'Root AOs'),h('div',{class:'sub'},'Проверка системы…'),log,h('div',{class:'sp-bar'},bar)));
+  const t0=performance.now(),D=4000;let stop=false;
+  (function tick(){const p=Math.min(1,(performance.now()-t0)/D);bar.style.width=(p*100)+'%';fg.style.strokeDashoffset=String(289*(1-p));if(p<1&&!stop)requestAnimationFrame(tick)})();
+  const stP=T(()=>P('state'));
+  const add=(t,cls)=>{const d=h('div',{class:cls||''},t);log.append(d);requestAnimationFrame(()=>d.classList.add('on'));return d};
+  const step=async(at,txt,res)=>{await sleep(Math.max(0,at-(performance.now()-t0)));const d=add('› '+txt+' …');await sleep(520);const r=await res();d.className='on '+(r[1]||'');d.textContent='› '+txt+' … '+r[0]};
+  await Promise.all([
+    step(150,'Целостность пакета',()=>['OK','ok']),
+    step(1050,'Состояние загрузчика',async()=>{S=await stP;return S?[S.unl?'UNLOCKED':'LOCKED',S.unl?'ok':'wr']:['ошибка','bad']}),
+    step(1950,'Бинарник su',async()=>{await stP;return S&&S.unl?['найден','ok']:['не найден','wr']}),
+    step(2850,'Права доступа',async()=>{await stP;return S&&S.unl&&S.root?['GRANTED','ok']:['DENIED','bad']})]);
+  await sleep(Math.max(0,D-(performance.now()-t0)));stop=true;bar.style.width='100%';fg.style.strokeDashoffset='0';await sleep(180);
+  if(!S){view(h('div',{class:'gate'},h('div',{class:'big bad'},ico('⚠')),h('h2',{},'Нет связи с системой'),h('p',{},'Root AOs нужно запускать внутри ALFA OS.'),btn('Повторить','',splash)));return}
+  applyTheme(S);route()}
+function route(){
+  if(!S.unl)gateUnlock();else if(!S.root)gateRoot();else main()}
+
+/* ================= gates ================= */
+function gateUnlock(){
+  view(h('div',{class:'gate'},h('div',{class:'big bad'},ico('🔒')),chip('Bootloader: LOCKED','bad'),h('h2',{},'Загрузчик заблокирован'),
+    h('p',{},'Чтобы Root AOs заработал, нужно разблокировать загрузчик. Это займёт около 15 секунд и потребует перезагрузки.'),
+    lines([['1','Включить OEM-разблокировку'],['2','Разблокировать загрузчик'],['3','Пропатчить загрузочный образ и выдать root'],['4','Перезагрузить устройство']]),
+    h('div',{class:'btns',style:'justify-content:center'},btn('Разблокировать загрузчик','',async()=>{
+      const ok=await dlg({title:'Разблокировать загрузчик?',text:'Телефон перезагрузится. В ALFA OS ваши данные останутся на месте — это безопасная симуляция, на реальном устройстве такая операция стирает данные.',check:'Я понимаю, что устройство перезагрузится',ok:'Продолжить'});
+      if(!ok)return;
+      view(h('div',{class:'splash'},h('div',{class:'sp-ring'},h('b',{},ico('🔓'))),h('h1',{},'Подготовка…'),h('div',{class:'sub'},'fastboot flashing unlock'),h('div',{class:'sp-bar'},h('i',{style:'width:100%;transition:width 1.4s'}))));
+      await sleep(1500);T(()=>P('unlockBootloader'))}))));
+}
+function gateRoot(){
+  view(h('div',{class:'gate'},h('div',{class:'big wr'},ico('🛡')),chip('Bootloader: UNLOCKED','ok'),chip('Root: DENIED','bad'),h('h2',{},'Root-доступ отключён'),
+    h('p',{},'Загрузчик разблокирован, но суперпользователь выключен (например, в настройках системы). Выдайте root, чтобы продолжить.'),
+    h('div',{class:'btns',style:'justify-content:center'},btn('Выдать root','',async()=>{const r=await T(()=>P('setRoot',true));if(r!==undefined){S.root=true;toast('Root выдан');await sleep(500);main()}}))))}
+
+/* ================= main ================= */
+const TOOLS=[];const STUDIO={};
+function main(){
+  let tab='tools',cat='all',q='';
+  const body=h('main',{class:'bd'}),head=h('header',{class:'hd'},h('div',{class:'ttl'},'Root AOs',h('small',{},'v1.0.0')),chip('ROOT','ok'),chip('BL unlocked','ok'));
+  const tabs=h('nav',{class:'tabs'});
+  const shell=h('div',{style:'display:flex;flex-direction:column;height:100%'},head,body,tabs);
+  const CATS=[['all','Все'],['sys','Система'],['look','Вид'],['apps','Приложения'],['sec','Безопасность'],['dev','Разработка'],['mon','Мониторинг']];
+  function back(){view(shell);draw()}
+  function openTool(t){
+    const cl=[];const pb=h('div',{class:'pb'});
+    const pg=h('div',{class:'pg'},h('div',{class:'ph'},h('button',{type:'button','aria-label':'Назад',onclick:()=>{cl.forEach(f=>{try{f()}catch(e){}});back()}},'←'),h('div',{},h('b',{},t.t),h('small',{},t.d))),pb);
+    view(pg);const ctx={box:pb,on:f=>cl.push(f),back:()=>{cl.forEach(f=>{try{f()}catch(e){}});back()}};
+    Promise.resolve().then(()=>t.open(ctx)).catch(e=>pb.replaceChildren(h('div',{class:'empty'},(e&&e.message||String(e)))))}
+  function drawTabs(){tabs.replaceChildren(...[['tools','🧰','Инструменты'],['studio','🧪','Студия'],['mods','🧩','Модули'],['status','📟','Статус']].map(([k,e,t])=>h('button',{type:'button',class:k===tab?'on':'',onclick:()=>{tab=k;draw()}},h('i',{},ico(e)),t)))}
+  function draw(){drawTabs();body.replaceChildren();body.scrollTop=0;
+    if(tab==='tools')drawTools();else if(tab==='studio')STUDIO.open(body);else if(tab==='mods')drawMods();else drawStatus()}
+  function drawTools(){
+    const s=h('input',{type:'search',placeholder:'Поиск среди '+TOOLS.length+' инструментов',value:q});
+    const grid=h('div',{class:'tools'});
+    const cats=h('div',{class:'cats'});
+    const paint=()=>{cats.replaceChildren(...CATS.map(([k,n])=>h('button',{type:'button',class:k===cat?'on':'',onclick:()=>{cat=k;paint()}},n)));
+      const L=TOOLS.filter(t=>(cat==='all'||t.c===cat)&&(!q||(t.t+' '+t.d).toLowerCase().includes(q.toLowerCase())));
+      grid.replaceChildren(...(L.length?L.map(t=>h('button',{class:'tile',type:'button',onclick:()=>openTool(t)},h('i',{},ico(t.e)),h('b',{},t.t),h('small',{},t.d))):[h('div',{class:'empty',style:'grid-column:1/-1'},'Ничего не найдено')]))};
+    s.addEventListener('input',()=>{q=s.value;paint()});body.append(h('div',{style:'margin-bottom:10px'},s),cats,grid);paint()}
+  function drawMods(){
+    const box=h('div',{});body.append(box);
+    const LOG=['Распаковка архива модуля …','Проверка подписи … OK','Монтирование overlay … OK','Регистрация службы … OK','Готово. Нужна перезагрузка.'];
+    const reboot=async()=>{const ok=await dlg({title:'Перезагрузить?',text:'Модули начнут действовать после загрузки системы.',ok:'Перезагрузить'});if(ok)T(()=>P('reboot','normal'))};
+    const card=(m,paint)=>{
+      const log=h('pre',{class:'cd'});log.hidden=true;
+      const chips=h('div',{class:'btns',style:'margin:8px 0 0'},m.inst?chip(m.on?'Включён':'Выключен',m.on?'ok':''):chip('Не установлен',''),m.active?chip('Работает','ok'):null,m.pending?chip('Ждёт перезагрузки','wr'):null);
+      const acts=h('div',{class:'btns'});
+      if(!m.inst){const b=btn('Установить','',async()=>{b.disabled=true;log.hidden=false;for(const l of LOG){log.textContent+=l+'\n';await sleep(420)}await T(()=>P('modInstall',m.id));toast('Модуль установлен');paint()});acts.append(b)}
+      else acts.append(row({e:'🧩',t:'Включить модуль',r:sw(m.on,async(v,i)=>{const r=await T(()=>P('modToggle',m.id,v));if(r===undefined)i.checked=!v;else paint()})}),btn('Удалить','d sm',async()=>{const ok=await dlg({title:'Удалить «'+m.name+'»?',text:'Изменения исчезнут после перезагрузки.',ok:'Удалить',danger:true});if(!ok)return;await T(()=>P('modRemove',m.id));paint()}));
+      return h('div',{class:'card'},h('h3',{},m.name+' · v'+m.ver),h('p',{},m.d),h('p',{style:'font-size:12px;margin-top:4px'},'Автор: '+m.by),chips,log,acts)};
+    const paint=async()=>{const L=await T(()=>P('modList'));if(!L)return;
+      box.replaceChildren(h('div',{class:'card'},h('h3',{},'Модули'),h('p',{},'Небольшие надстройки для системы. Устанавливаются за пару секунд, а действуют после перезагрузки.')),
+        L.some(m=>m.pending)?h('div',{class:'card',style:'border-color:var(--warn)'},h('h3',{},'Нужна перезагрузка'),h('p',{},'Часть изменений ещё не применена.'),h('div',{class:'btns'},btn('Перезагрузить','',reboot))):null,
+        ...L.map(m=>card(m,paint)))};
+    paint()}
+  function drawStatus(){
+    const box=h('div',{});body.append(box);
+    T(async()=>{S=await P('state');applyTheme(S);
+      box.append(h('div',{class:'card'},h('h3',{},'Состояние'),h('div',{class:'btns',style:'margin:8px 0 0'},chip('Bootloader: '+(S.unl?'UNLOCKED':'LOCKED'),S.unl?'ok':'bad'),chip('Root: '+(S.root?'GRANTED':'DENIED'),S.root?'ok':'bad'),chip('OEM unlock: '+(S.oem?'on':'off'),S.oem?'ok':'wr'))),
+        h('div',{class:'card'},h('h3',{},'О приложении'),h('div',{class:'kv'},h('span',{},'Версия'),h('span',{},'Root AOs 1.0.0'),h('span',{},'su'),h('span',{},'25.4 (alfa)'),h('span',{},'Система'),h('span',{},S.os),h('span',{},'Инструментов'),h('span',{},String(TOOLS.length)),h('span',{},'Своих приложений'),h('span',{},String(S.uapps)))),
+        h('div',{class:'btns'},btn('↻ Повторить проверку','t',splash),btn('Закрыть','t',()=>P('close'))))})}
+  view(shell);draw()}
+window.RA={h,$,view,P,T,toast,sw,row,btn,rng,seg,dlg,chip,sleep,esc,TOOLS,STUDIO,applyTheme,main,splash};
+
+/* ================= TOOLS ================= */
+const add=(id,e,t,d,c,open)=>TOOLS.push({id,e,t,d,c,open});
+
+/* 1 Root-менеджер */
+add('rootmgr','🛡️','Root-менеджер','Кому давать root','sec',async c=>{
+  const L=await P('rootApps'),list=h('div'),s=h('input',{type:'search',placeholder:'Поиск приложения'});
+  const draw=()=>{const q=s.value.toLowerCase();list.replaceChildren(...L.filter(a=>!q||a.name.toLowerCase().includes(q)).map(a=>row({e:a.user?'🧩':'📦',t:a.name,d:a.id,r:sw(a.granted,async(v,i)=>{const r=await T(()=>P('rootGrant',a.id,v));if(r===undefined){i.checked=!v;return}a.granted=v;toast((v?'Root выдан: ':'Root отозван: ')+a.name)})})));if(!list.children.length)list.append(h('div',{class:'empty'},'Приложений нет'))};
+  s.addEventListener('input',draw);c.box.append(h('div',{class:'card'},h('p',{},'Приложения, созданные в Студии, при первом обращении к root спросят разрешение. Здесь можно выдать или отозвать его вручную.')),h('div',{style:'margin:10px 0'},s),list);draw()});
+
+/* 7 Монитор процессов */
+add('ps','📊','Монитор процессов','CPU, память, завершение','mon',async c=>{
+  const tb=h('tbody'),info=h('div',{class:'card'});let live=true;c.on(()=>live=false);
+  c.box.append(info,h('div',{class:'card',style:'padding:8px 6px'},h('table',{class:'ps'},h('thead',{},h('tr',{},h('th',{},'PID'),h('th',{},'Процесс'),h('th',{},'CPU'),h('th',{},'RAM'),h('th',{}))),tb)));
+  const upd=async()=>{if(!live)return;const L=await T(()=>P('ps'));if(!L||!live)return;
+    info.replaceChildren(h('div',{class:'kv'},h('span',{},'Процессов'),h('span',{},String(L.length)),h('span',{},'Суммарно CPU'),h('span',{},L.reduce((s,x)=>s+x.cpu,0).toFixed(1)+'%'),h('span',{},'Суммарно RAM'),h('span',{},L.reduce((s,x)=>s+x.mem,0)+' МБ')));
+    tb.replaceChildren(...L.map(x=>h('tr',{},h('td',{class:'mono'},String(x.pid)),h('td',{},x.name+(x.min?' (свёрнуто)':'')),h('td',{},x.cpu.toFixed(1)+'%'),h('td',{},x.mem+' МБ'),h('td',{},x.id==='rootaos'?'':h('button',{class:'btn sm d',type:'button',onclick:async()=>{await T(()=>P('kill',x.id));upd()}},'Kill')))));
+    if(!L.length)tb.append(h('tr',{},h('td',{colspan:5,class:'empty'},'Нет запущенных приложений')))};
+  upd();const iv=setInterval(upd,1500);c.on(()=>clearInterval(iv))});
+
+/* 8 Очистка RAM */
+add('ram','🧹','Очистка RAM','Закрыть фоновые приложения','mon',async c=>{
+  const lab=h('div',{class:'big-n'}),meter=h('i'),sub=h('div',{style:'color:var(--tx2);font-size:13px'});
+  const upd=async()=>{const m=await P('mem');lab.textContent=m.used+' / '+m.total+' МБ';meter.style.width=(m.used/m.total*100)+'%';sub.textContent='Запущено приложений: '+m.apps};
+  c.box.append(h('div',{class:'card',style:'text-align:center'},lab,h('div',{class:'meter'},meter),sub),
+    h('div',{class:'btns',style:'justify-content:center'},btn('Очистить сейчас','',async()=>{const r=await T(()=>P('killAll'));if(r){toast('Закрыто: '+r.n+' · освобождено '+r.freed+' МБ');upd()}})));upd()});
+
+/* 9 Заморозка приложений */
+add('freeze','❄️','Заморозка приложений','Отключить без удаления','apps',async c=>{
+  const L=await P('apps'),list=h('div'),s=h('input',{type:'search',placeholder:'Поиск'});
+  const draw=()=>{const q=s.value.toLowerCase();list.replaceChildren(...L.filter(a=>!q||a.name.toLowerCase().includes(q)).map(a=>row({e:a.frozen?'❄️':'📦',t:a.name,d:a.id+(a.protect?' · системное':''),r:a.protect?chip('защищено'):sw(a.frozen,async(v,i)=>{const r=await T(()=>P('freeze',a.id,v));if(r===undefined){i.checked=!v;return}a.frozen=v;draw();toast((v?'Заморожено: ':'Разморожено: ')+a.name)})})))};
+  s.addEventListener('input',draw);c.box.append(h('div',{class:'card'},h('p',{},'Замороженное приложение пропадает из списка и не запускается, пока вы его не разморозите.')),h('div',{style:'margin:10px 0'},s),list);draw()});
+
+/* 10 Переименование приложений */
+add('rename','✏️','Переименование','Свои названия приложений','apps',async c=>{
+  let L=await P('apps');const list=h('div');
+  const draw=()=>list.replaceChildren(...L.map(a=>row({e:'🏷️',t:a.name,d:a.renamed?'было: '+a.orig:a.id,on:async()=>{const v=await dlg({title:'Новое название',text:a.orig,input:{value:a.name,ph:a.orig},ok:'Сохранить'});if(v==null)return;await T(()=>P('renameApp',a.id,v.trim()||null));L=await P('apps');draw();toast('Готово')}})));
+  c.box.append(h('div',{class:'card'},h('p',{},'Коснитесь приложения, чтобы изменить название. Пустое поле вернёт исходное имя.')),h('div',{style:'margin-top:10px'},list),h('div',{class:'btns'},btn('Сбросить все названия','t',async()=>{await T(()=>P('renameReset'));L=await P('apps');draw()})));draw()});
+
+/* 11 Экран загрузки */
+add('bootc','🥾','Экран загрузки','Название и версия при старте','look',async c=>{
+  const b=await P('bootGet');const n=h('input',{type:'text',value:b.name}),v=h('input',{type:'text',value:b.ver});
+  const pv=h('div',{class:'card',style:'text-align:center'},h('div',{style:'font-size:22px;font-weight:700;letter-spacing:.2em'},b.name,' ',h('span',{class:'chip'},b.ver)));
+  const upd=()=>pv.firstChild.replaceChildren(n.value||' ',' ',h('span',{class:'chip'},v.value));n.addEventListener('input',upd);v.addEventListener('input',upd);
+  c.box.append(pv,h('label',{class:'f'},'Название системы'),n,h('label',{class:'f'},'Метка версии'),v,
+    h('div',{class:'btns'},btn('Сохранить','',async()=>{await T(()=>P('bootSet',{name:n.value.trim()||'ALFA OS',ver:v.value.trim()||'beta 0.6'}));toast('Сохранено — увидите при следующей загрузке')}),btn('Сбросить','t',async()=>{await T(()=>P('bootSet',null));n.value='ALFA OS';v.value='beta 0.6';upd()})))});
+
+/* 12 build.prop */
+add('bp','📄','Редактор build.prop','Модель, версия, свойства','dev',async c=>{
+  let o=await P('bpGet');const list=h('div');
+  const draw=()=>list.replaceChildren(...Object.keys(o).sort().map(k=>row({e:o[k].mod?'✏️':'📄',t:k,d:o[k].v,on:async()=>{const v=await dlg({title:k,text:'Новое значение',input:{value:o[k].v},ok:'Записать'});if(v==null)return;await T(()=>P('bpSet',k,v));o=await P('bpGet');draw();toast('setprop '+k)}})));
+  c.box.append(h('div',{class:'card'},h('p',{},'Модель и сборка отображаются в «Настройки → О системе». Свойства читаются в терминале через getprop.')),h('div',{style:'margin-top:10px'},list),
+    h('div',{class:'btns'},btn('+ Новое свойство','',async()=>{const k=await dlg({title:'Имя свойства',input:{ph:'persist.my.prop'},ok:'Далее'});if(!k)return;const v=await dlg({title:k,text:'Значение',input:{ph:'1'},ok:'Записать'});if(v==null)return;await T(()=>P('bpSet',k.trim(),v));o=await P('bpGet');draw()}),
+      btn('Сбросить','t',async()=>{await T(()=>P('bpReset'));o=await P('bpGet');draw();toast('build.prop сброшен')})));draw()});
+
+/* 13 Терминал */
+add('term','⌨️','Root-терминал','su, ps, pm, am, settings…','dev',async c=>{
+  const out=h('div',{class:'term'}),inp=h('input',{type:'text',autocapitalize:'off',autocomplete:'off',spellcheck:'false',placeholder:'введите команду'});
+  let cwd='/',hist=[],hi=0;
+  const prompt=()=>'root@alfa:'+cwd+' # ';
+  const put=(t,cls)=>{out.append(h('div',{class:cls||''},t));out.scrollTop=out.scrollHeight};
+  put('Root AOs shell · su 25.4\nВведите help, чтобы увидеть команды.','d');
+  const run=async cmd=>{put(prompt()+cmd,'p');if(cmd.trim()){hist.push(cmd);hi=hist.length}
+    const r=await T(()=>P('sh',cmd,cwd));if(!r)return;if(r.clear){out.replaceChildren()}else if(r.o)put(r.o,r.err?'e':'');cwd=r.cwd||cwd};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){const v=inp.value;inp.value='';run(v)}else if(e.key==='ArrowUp'&&hist.length){hi=Math.max(0,hi-1);inp.value=hist[hi]||'';e.preventDefault()}else if(e.key==='ArrowDown'){hi=Math.min(hist.length,hi+1);inp.value=hist[hi]||'';e.preventDefault()}});
+  const quick=['help','ls /','ps','getprop','pm list packages','neofetch','id','uptime'];
+  c.box.append(out,h('div',{class:'tin'},inp,btn('↵','',()=>{const v=inp.value;inp.value='';run(v)})),h('div',{class:'chips'},...quick.map(q=>h('button',{type:'button',onclick:()=>run(q)},q))))});
+
+/* 14 Меню перезагрузки */
+add('pwr','🔁','Меню перезагрузки','Reboot, recovery, безопасный режим','sys',async c=>{
+  const A=[['normal','🔄','Перезагрузить','Обычная перезагрузка'],['soft','⚡','Быстрая перезагрузка','Перезапуск интерфейса без выключения'],['recovery','🛠️','В режим Recovery','Меню восстановления'],['safe','🛟','Безопасный режим','Без сторонних приложений'],['off','⏻','Выключить','Полное выключение']];
+  c.box.append(...A.map(([k,e,t,d])=>row({e,t,d,on:async()=>{const ok=await dlg({title:t+'?',text:d,ok:'Да'});if(ok)T(()=>P('reboot',k))}})))});
+
+/* 16 Резервные копии */
+add('bak','💾','Резервные копии','Сохранить и вернуть настройки','sys',async c=>{
+  const list=h('div');
+  const draw=async()=>{const L=await P('bakList');list.replaceChildren(...(L.length?L.map(b=>row({e:'🗂️',t:b.name,d:b.size+' · '+b.date,r:h('div',{style:'display:flex;gap:6px'},btn('Вернуть','sm',async()=>{const ok=await dlg({title:'Восстановить копию?',text:'Настройки будут заменены, система перезапустится.',ok:'Восстановить'});if(ok)T(()=>P('bakRestore',b.id))}),btn('✕','sm t',async()=>{await T(()=>P('bakDel',b.id));draw()}))})):[h('div',{class:'empty'},'Копий пока нет')]))};
+  c.box.append(h('div',{class:'card'},h('p',{},'Копия содержит настройки, раскладку, закладки и ваши приложения из Студии. Файл сохраняется в «Файлы → Документы».'),h('div',{class:'btns'},btn('Создать копию','',async()=>{const r=await T(()=>P('bakCreate'));if(r){toast('Сохранено: '+r.name);draw()}}))),h('div',{class:'sec'},'Сохранённые копии'),list);draw()});
+
+/* 17 Скрипты автозапуска */
+add('init','📜','Скрипты автозапуска','Команды при каждой загрузке','dev',async c=>{
+  const st=await P('initGet');const ta=h('textarea',{class:'mono',rows:9,spellcheck:'false',placeholder:'# одна команда на строку\nsettings put hue 150\nnotify "Привет" "Загрузка завершена"'},st.text);
+  const out=h('pre',{class:'cd'},'');out.hidden=true;let on=st.on;
+  c.box.append(row({e:'▶️',t:'Выполнять при загрузке',d:'Работает при включённом root',r:sw(on,v=>{on=v;T(()=>P('initSet',ta.value,on))})}),h('label',{class:'f'},'Команды (синтаксис терминала)'),ta,
+    h('div',{class:'btns'},btn('Сохранить','',async()=>{await T(()=>P('initSet',ta.value,on));toast('Сохранено')}),btn('Выполнить сейчас','t',async()=>{await T(()=>P('initSet',ta.value,on));const r=await T(()=>P('initRun'));if(r){out.hidden=false;out.textContent=r.o||'(нет вывода)'}})),out)});
+
+/* 18 Лаборатория обоев */
+add('wall','🖼️','Лаборатория обоев','Свой градиент вместо обоев','look',async c=>{
+  const w=await P('wallGet');let c1=w?w.c1:'#6a54f0',c2=w?w.c2:'#0fa88a',an=w?w.a:135;
+  const prev=h('div',{class:'prev',style:'height:140px'}),i1=h('input',{type:'color',value:c1}),i2=h('input',{type:'color',value:c2});
+  const css=()=>'linear-gradient('+an+'deg,'+c1+','+c2+')';const paint=()=>{prev.style.background=css()};paint();
+  i1.addEventListener('input',()=>{c1=i1.value;paint()});i2.addEventListener('input',()=>{c2=i2.value;paint()});
+  const PRE=[['#ff7e5f','#feb47b',160],['#00c6ff','#0072ff',135],['#7f00ff','#e100ff',120],['#11998e','#38ef7d',45],['#232526','#414345',180],['#f12711','#f5af19',90]];
+  c.box.append(prev,h('div',{style:'display:flex;gap:12px;align-items:center'},i1,i2,h('div',{style:'flex:1'},rng(0,360,1,an,v=>{an=v;paint()}))),
+    h('div',{class:'chips'},...PRE.map(([a,b,d])=>h('button',{type:'button',style:'background:linear-gradient('+d+'deg,'+a+','+b+');width:44px;height:30px;border-radius:10px;border:0',onclick:()=>{c1=a;c2=b;an=d;i1.value=a;i2.value=b;paint()}}))),
+    h('div',{class:'btns'},btn('Применить','',()=>T(async()=>{await P('wallSet',{c1,c2,a:an});toast('Обои применены')})),btn('Вернуть стандартные','t',()=>T(async()=>{await P('wallSet',null);toast('Сброшено')}))))});
+
+/* 19 Тест уведомлений */
+add('ntf','🔔','Тест уведомлений','Отправить своё уведомление','dev',async c=>{
+  const apps=await P('apps');const ti=h('input',{type:'text',value:'Root AOs'}),tx=h('input',{type:'text',value:'Проверка уведомления'}),sel=h('select',{},...apps.map(a=>h('option',{value:a.id,selected:a.id==='rootaos'},a.name)));
+  c.box.append(h('label',{class:'f'},'Заголовок'),ti,h('label',{class:'f'},'Текст'),tx,h('label',{class:'f'},'От имени приложения'),sel,
+    h('div',{class:'btns'},btn('Отправить','',()=>T(()=>P('notify',{title:ti.value,text:tx.value,app:sel.value}))),
+      btn('Серия ×3','t',async()=>{for(let i=1;i<=3;i++){await T(()=>P('notify',{title:ti.value,text:tx.value+' #'+i,app:sel.value}));await sleep(700)}}),
+      btn('С индикатором','t',()=>T(()=>P('notify',{title:ti.value,text:tx.value,app:sel.value,progress:true})))))});
+
+/* 20 Информация о системе */
+add('sys','🖥️','Информация о системе','Железо, память, сеть','mon',async c=>{
+  const box=h('div');c.box.append(box);let live=true;c.on(()=>live=false);
+  const upd=async()=>{if(!live)return;const o=await T(()=>P('sysinfo'));if(!o||!live)return;
+    box.replaceChildren(...o.map(g=>h('div',{class:'card'},h('h3',{},g.t),h('div',{class:'kv'},...g.r.flatMap(([k,v])=>[h('span',{},k),h('span',{},String(v))])))))};
+  upd();const iv=setInterval(upd,1500);c.on(()=>clearInterval(iv))});
+
+/* 21 Блокировщик хостов */
+add('hosts','🚫','Блокировщик хостов','Запрет сайтов в браузере','sec',async c=>{
+  let st=await P('hostsGet');const list=h('div'),inp=h('input',{type:'text',placeholder:'example.com'});
+  const save=()=>T(()=>P('hostsSet',st));
+  const draw=()=>list.replaceChildren(...(st.list.length?st.list.map(x=>row({e:'🚫',t:x,r:btn('✕','sm t',()=>{st.list=st.list.filter(y=>y!==x);save();draw()})})):[h('div',{class:'empty'},'Список пуст')]));
+  const addH=v=>{v=String(v||'').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');if(!v||st.list.includes(v))return;st.list.push(v);save();draw()};
+  c.box.append(row({e:'🛑',t:'Блокировка включена',d:'Действует в приложении «Браузер»',r:sw(st.on,v=>{st.on=v;save()})}),
+    h('div',{style:'display:flex;gap:8px;margin:10px 0'},inp,btn('+','',()=>{addH(inp.value);inp.value=''})),
+    h('div',{class:'chips',style:'margin:0 0 10px'},...['doubleclick.net','googlesyndication.com','ads.example.com','tracker.example.org'].map(x=>h('button',{type:'button',onclick:()=>addH(x)},'+ '+x))),list);draw()});
+
+/* 22 Logcat */
+add('log','📋','Logcat','Журнал событий системы','mon',async c=>{
+  const box=h('div',{class:'term lg'}),lv=h('select',{},...[['V','Все'],['I','Info+'],['W','Warn+'],['E','Errors']].map(([k,n])=>h('option',{value:k},n))),f=h('input',{type:'text',placeholder:'фильтр по тегу/тексту'});
+  let next=0,paused=false,all=[],live=true;c.on(()=>live=false);
+  const rank={V:0,I:1,W:2,E:3};
+  const draw=()=>{const q=f.value.toLowerCase(),m=rank[lv.value];box.replaceChildren(...all.filter(x=>rank[x.lv]>=m&&(!q||(x.tag+x.msg).toLowerCase().includes(q))).slice(-300).map(x=>h('div',{class:x.lv},h('span',{class:'t'},x.t+' '),x.lv+'/'+x.tag+': '+x.msg)));box.scrollTop=box.scrollHeight};
+  const poll=async()=>{if(!live)return;if(!paused){const r=await T(()=>P('logcat',next));if(r&&live){next=r.next;if(r.lines.length){all=all.concat(r.lines).slice(-600);draw()}}}};
+  lv.addEventListener('change',draw);f.addEventListener('input',draw);
+  c.box.append(h('div',{style:'display:flex;gap:8px;margin-bottom:8px'},lv,f),box,h('div',{class:'btns'},btn('Пауза','t',function(){paused=!paused;this.textContent=paused?'▶ Продолжить':'⏸ Пауза'}),btn('Очистить','t',async()=>{await T(()=>P('logClear'));all=[];draw()}),btn('Тестовая запись','t',()=>T(()=>P('sh','log Root AOs: тестовая запись')))));
+  await poll();const iv=setInterval(poll,1000);c.on(()=>clearInterval(iv))});
+
+/* 23 FPS-метр */
+add('fps','⏱️','FPS-метр','Счётчик кадров поверх системы','mon',async c=>{
+  let st=await P('fpsGet');const num=h('div',{class:'big-n'},'–');let live=true,fr=0,t0=performance.now();c.on(()=>live=false);
+  (function loop(){if(!live)return;fr++;const n=performance.now();if(n-t0>=1000){num.textContent=Math.round(fr*1000/(n-t0))+' fps';fr=0;t0=n}requestAnimationFrame(loop)})();
+  c.box.append(h('div',{class:'card',style:'text-align:center'},num,h('small',{style:'color:var(--tx2)'},'в этом окне')),
+    row({e:'📟',t:'Показывать поверх системы',d:'Маленький счётчик в углу экрана',r:sw(st.on,v=>{st.on=v;T(()=>P('fps',st))})}),
+    h('label',{class:'f'},'Положение'),seg([['tl','↖'],['tr','↗'],['bl','↙'],['br','↘']],st.pos,k=>{st.pos=k;T(()=>P('fps',st))}))});
+
+/* 24 Визуализатор касаний */
+add('touch','👆','Показ касаний','Круги в местах нажатия','dev',async c=>{
+  const on=await P('touchGet');
+  c.box.append(row({e:'👆',t:'Показывать касания',d:'Волны в точках нажатия по всей системе',r:sw(on,v=>T(()=>P('touch',v)))}),h('p',{style:'color:var(--tx2);margin:10px 4px;font-size:13px'},'Удобно для записи экрана и демонстраций.'))});
+
+/* 25 Цветовая лаборатория */
+add('color','🌈','Цветовая лаборатория','Фильтры для всего экрана','look',async c=>{
+  const cur=await P('filterGet');const F={gray:0,sepia:0,invert:0,contrast:100,sat:100,hue:0,bright:100};
+  const build=()=>{const a=[];if(F.gray)a.push('grayscale('+F.gray+'%)');if(F.sepia)a.push('sepia('+F.sepia+'%)');if(F.invert)a.push('invert('+F.invert+'%)');if(F.contrast!==100)a.push('contrast('+F.contrast+'%)');if(F.sat!==100)a.push('saturate('+F.sat+'%)');if(F.hue)a.push('hue-rotate('+F.hue+'deg)');if(F.bright!==100)a.push('brightness('+F.bright+'%)');return a.join(' ')};
+  const prev=h('div',{class:'prev',style:'background:linear-gradient(90deg,#f33,#fc3,#3c6,#39f,#93f)'});
+  const ctr=[['gray','Чёрно-белый',0,100],['sepia','Сепия',0,100],['invert','Инверсия',0,100],['contrast','Контраст',50,200],['sat','Насыщенность',0,300],['hue','Сдвиг цвета',0,360],['bright','Яркость',50,150]];
+  const apply=()=>{prev.style.filter=build()};const push=()=>T(()=>P('filterSet',build()));
+  const PRE={'Ночь':{sepia:60,bright:80,contrast:110},'Ч/Б':{gray:100},'Ретро':{sepia:80,contrast:110,sat:120},'Яркий':{sat:180,contrast:115},'Инверсия':{invert:100,hue:180}};
+  c.box.append(prev,h('div',{class:'chips',style:'margin:0 0 6px'},...Object.keys(PRE).map(n=>h('button',{type:'button',onclick:()=>{Object.assign(F,{gray:0,sepia:0,invert:0,contrast:100,sat:100,hue:0,bright:100},PRE[n]);c.box.querySelectorAll('input[type=range]').forEach((r,i)=>{r.value=F[ctr[i][0]]});apply();push()}},n))),
+    ...ctr.map(([k,n,a,b])=>h('div',{class:'card'},h('div',{style:'display:flex;justify-content:space-between'},h('b',{},n)),rng(a,b,1,F[k],v=>{F[k]=v;apply()},()=>push()))),
+    h('div',{class:'btns'},btn('Сбросить','t',()=>{Object.assign(F,{gray:0,sepia:0,invert:0,contrast:100,sat:100,hue:0,bright:100});c.box.querySelectorAll('input[type=range]').forEach((r,i)=>{r.value=F[ctr[i][0]]});apply();T(()=>P('filterSet',''))})))});
+
+/* ================= СТУДИЯ: создание приложений кодом ================= */
+const ICONS=[['📝','edit_note'],['🧮','calculate'],['🎮','sports_esports'],['⏱️','timer'],['🎨','palette'],['🎵','music_note'],['📷','photo_camera'],['🌤️','partly_cloudy_day'],['🗒️','sticky_note_2'],['💬','chat'],['🧪','science'],['🚀','rocket_launch'],['⭐','star'],['🛒','shopping_cart'],['📚','menu_book'],['💡','lightbulb'],['🔧','build'],['🧩','extension'],['🏠','home'],['📈','trending_up'],['🔒','lock'],['☕','coffee'],['🎲','casino'],['🌍','public']];
+const emojiOf=m=>{const f=ICONS.find(x=>x[1]===m);return f?f[0]:'🧩'};
+const HEAD='<!doctype html>\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<style>\nbody{font:16px system-ui,sans-serif;margin:0;padding:22px;background:#12101f;color:#f1eeff;text-align:center}\nbutton{font:inherit;padding:12px 20px;border:0;border-radius:999px;background:#8f7bff;color:#12101f;font-weight:700;margin:6px}\ninput,textarea{font:inherit;width:100%;padding:12px;border-radius:14px;border:1px solid #3a3560;background:#1c1932;color:inherit;box-sizing:border-box}\n';
+const TPL={
+ hello:['Привет, мир',HEAD+'</style>\n<h1>Привет, ALFA OS!</h1>\n<p>Это моё первое приложение.</p>\n<button onclick="alfa.toast(\'Привет из приложения!\',\'waving_hand\')">Показать тост</button>\n<button onclick="alfa.notify(\'Hello\',\'Уведомление из моего приложения\')">Уведомление</button>\n<button onclick="alfa.vibrate(40)">Вибро</button>\n'],
+ counter:['Счётчик',HEAD+'h1{font-size:72px;margin:30px 0}\n</style>\n<h1 id="n">0</h1>\n<button onclick="inc(-1)">−1</button><button onclick="inc(1)">+1</button><button onclick="inc(0)">Сброс</button>\n<script>\nvar n=0;\nalfa.store.get("n").then(function(v){n=+v||0;show()});\nfunction show(){document.getElementById("n").textContent=n}\nfunction inc(d){n=d?n+d:0;show();alfa.store.set("n",n)}\n<\/script>\n'],
+ notes:['Заметка',HEAD+'textarea{height:60vh;text-align:left}\n</style>\n<h2>Заметка</h2>\n<textarea id="t" placeholder="Пишите здесь…"></textarea>\n<p id="s" style="opacity:.6;font-size:13px">Сохраняется автоматически</p>\n<script>\nvar t=document.getElementById("t"),tm;\nalfa.store.get("note").then(function(v){t.value=v||""});\nt.addEventListener("input",function(){clearTimeout(tm);tm=setTimeout(function(){alfa.store.set("note",t.value)},300)});\n<\/script>\n'],
+ stopwatch:['Секундомер',HEAD+'#t{font:700 56px ui-monospace,monospace;margin:36px 0}\n</style>\n<div id="t">00:00.0</div>\n<button id="b" onclick="tog()">Старт</button><button onclick="rs()">Сброс</button>\n<script>\nvar run=0,t0=0,acc=0,iv;\nfunction f(ms){var s=ms/1000,m=Math.floor(s/60);return (m<10?"0":"")+m+":"+(s%60<10?"0":"")+(s%60).toFixed(1)}\nfunction draw(){document.getElementById("t").textContent=f(acc+(run?Date.now()-t0:0))}\nfunction tog(){if(run){acc+=Date.now()-t0;run=0;clearInterval(iv)}else{t0=Date.now();run=1;iv=setInterval(draw,100)}document.getElementById("b").textContent=run?"Стоп":"Старт";draw()}\nfunction rs(){run=0;acc=0;clearInterval(iv);document.getElementById("b").textContent="Старт";draw()}\n<\/script>\n'],
+ tip:['Чаевые',HEAD+'.r{font-size:34px;font-weight:800;margin:18px 0}\n</style>\n<h2>Калькулятор чаевых</h2>\n<input id="a" type="number" placeholder="Сумма счёта" oninput="c()">\n<p>Чаевые: <b id="p">10</b>%</p>\n<input id="s" type="range" min="0" max="30" value="10" oninput="document.getElementById(\'p\').textContent=this.value;c()">\n<div class="r" id="r">0</div>\n<script>\nfunction c(){var a=+document.getElementById("a").value||0,p=+document.getElementById("s").value;document.getElementById("r").textContent=(a*(1+p/100)).toFixed(2)}\n<\/script>\n'],
+ root:['Root: акцент',HEAD+'</style>\n<h2>Цвет акцента системы</h2>\n<p id="m">Проверяю root…</p>\n<input id="s" type="range" min="0" max="360" value="270" style="padding:0">\n<h1 id="h">270°</h1>\n<button onclick="uname()">uname -a</button>\n<pre id="o" style="text-align:left;white-space:pre-wrap;font-size:12px"></pre>\n<script>\nalfa.root.available().then(function(ok){document.getElementById("m").textContent=ok?"Root доступен ✓":"Root недоступен"});\nvar s=document.getElementById("s");\ns.addEventListener("input",function(){document.getElementById("h").textContent=s.value+"°"});\ns.addEventListener("change",function(){alfa.root.exec("settings put hue "+s.value)});\nfunction uname(){alfa.root.exec("uname -a").then(function(r){document.getElementById("o").textContent=r.o})}\n<\/script>\n'],
+ clicker:['Кликер',HEAD+'#b{font-size:64px;width:180px;height:180px;border-radius:50%;margin:30px 0}\n</style>\n<h2>Очки: <span id="p">0</span></h2>\n<button id="b" onclick="hit()">Тап</button>\n<p style="opacity:.6">Рекорд: <span id="r">0</span></p>\n<script>\nvar p=0,r=0;\nalfa.store.get("rec").then(function(v){r=+v||0;document.getElementById("r").textContent=r});\nfunction hit(){p++;document.getElementById("p").textContent=p;alfa.vibrate(8);if(p>r){r=p;document.getElementById("r").textContent=r;alfa.store.set("rec",r)}}\n<\/script>\n']};
+const ED={id:null,name:'Моё приложение',icon:'rocket_launch',tone:'p',code:TPL.hello[1],mode:'edit',pv:false};
+const TONES={p:'hsl(var(--h) 80% 70%)',s:'hsl(calc(var(--h) + 40) 70% 66%)',t:'hsl(calc(var(--h) + 90) 70% 64%)'};
+let pvWin=null;
+addEventListener('message',e=>{const d=e.data;if(!d||!d.ualfa||!pvWin||e.source!==pvWin)return;
+  P('uapi','__studio',d.m,d.a).then(r=>pvWin&&pvWin.postMessage({ualfa:1,id:d.id,ok:true,res:r},'*')).catch(er=>pvWin&&pvWin.postMessage({ualfa:1,id:d.id,ok:false,err:er.message},'*'))});
+
+STUDIO.open=function(body){
+  const wrap=h('div');body.append(wrap);
+  const draw=()=>{wrap.replaceChildren(seg([['edit','Редактор'],['mine','Мои приложения'],['doc','Справка']],ED.mode,k=>{ED.mode=k;pvWin=null;draw()}),h('div',{style:'height:12px'}));
+    const box=h('div');wrap.append(box);
+    if(ED.mode==='edit')editor(box);else if(ED.mode==='mine')mine(box);else docs(box)};
+  const editor=box=>{
+    const name=h('input',{type:'text',maxlength:24,value:ED.name,placeholder:'Название приложения'});name.addEventListener('input',()=>ED.name=name.value);
+    const ig=h('div',{class:'icg'}),tg=h('div',{class:'tones'});
+    const drI=()=>ig.replaceChildren(...ICONS.map(([e,m])=>h('button',{type:'button',class:m===ED.icon?'on':'',title:m,onclick:()=>{ED.icon=m;drI()}},e)));
+    const drT=()=>tg.replaceChildren(...['p','s','t'].map(k=>h('button',{type:'button',class:k===ED.tone?'on':'','aria-label':'Цвет '+k,style:'background:'+TONES[k],onclick:()=>{ED.tone=k;drT()}})));drI();drT();
+    const ta=h('textarea',{class:'ed',spellcheck:'false',autocapitalize:'off',value:ED.code});
+    const cnt=h('small',{style:'color:var(--tx2)'});const upc=()=>{cnt.textContent=ta.value.split('\n').length+' строк · '+ta.value.length+' символов'};upc();
+    ta.addEventListener('input',()=>{ED.code=ta.value;upc()});
+    ta.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();const s=ta.selectionStart;ta.setRangeText('  ',s,ta.selectionEnd,'end');ED.code=ta.value;upc()}});
+    const tsel=h('select',{},...Object.keys(TPL).map(k=>h('option',{value:k},TPL[k][0])));
+    const pvBox=h('div');
+    const run=async()=>{const html=await T(()=>P('uwrap',ta.value));if(html==null)return;const f=h('iframe',{class:'pv',sandbox:'allow-scripts allow-forms allow-modals',title:'Предпросмотр'});f.srcdoc=html;pvBox.replaceChildren(f);pvWin=f.contentWindow;
+      f.addEventListener('load',()=>{pvWin=f.contentWindow})};
+    const save=async()=>{if(!ED.name.trim()){toast('Введите название');return}if(!ta.value.trim()){toast('Код пустой');return}
+      const r=await T(()=>P('uappSave',{id:ED.id,name:ED.name.trim(),icon:ED.icon,tone:ED.tone,code:ta.value}));
+      if(r){ED.id=r.id;toast(r.created?'Приложение установлено — ищите на рабочем столе':'Изменения сохранены');draw()}};
+    box.append(ED.id?h('div',{class:'card',style:'display:flex;align-items:center;gap:10px'},h('div',{style:'flex:1'},h('b',{},'Редактирование'),h('small',{style:'display:block;color:var(--tx2)'},ED.id)),btn('Новое','t sm',()=>{Object.assign(ED,{id:null,name:'Моё приложение',icon:'rocket_launch',tone:'p',code:TPL.hello[1]});draw()})):null,
+      h('label',{class:'f'},'Название'),name,h('label',{class:'f'},'Иконка'),ig,h('label',{class:'f'},'Цвет иконки'),tg,
+      h('label',{class:'f'},'Шаблон'),h('div',{style:'display:flex;gap:8px'},tsel,btn('Загрузить','t',()=>{ED.code=TPL[tsel.value][1];ta.value=ED.code;upc();toast('Шаблон загружен')})),
+      h('label',{class:'f'},'Код приложения (HTML + CSS + JS)'),ta,h('div',{style:'margin-top:4px'},cnt),
+      h('div',{class:'btns'},btn('▶ Запустить','t',run),btn(ED.id?'Сохранить изменения':'Собрать и установить','',save)),pvBox)};
+  const mine=async box=>{
+    const L=await T(()=>P('uapps'))||[];
+    if(!L.length){box.append(h('div',{class:'empty'},'Своих приложений пока нет. Создайте первое в редакторе.'));return}
+    box.append(...L.map(a=>h('div',{class:'card'},h('div',{style:'display:flex;gap:12px;align-items:center'},h('div',{class:'e',style:'width:44px;height:44px;border-radius:14px;background:'+TONES[a.tone]+';display:grid;place-items:center;font-size:22px'},ico(emojiOf(a.icon))),h('div',{style:'flex:1;min-width:0'},h('b',{},a.name),h('small',{style:'display:block;color:var(--tx2)'},a.id+' · '+a.size)),chip(a.root?'root ✓':'без root',a.root?'ok':'')),
+      h('div',{class:'btns',style:'margin-top:10px'},btn('Открыть','sm',()=>T(()=>P('uappOpen',a.id))),btn('Править','t sm',async()=>{const r=await T(()=>P('uappGet',a.id));if(r){Object.assign(ED,{id:a.id,name:r.name,icon:r.icon,tone:r.tone,code:r.code,mode:'edit'});draw()}}),btn('Удалить','d sm',async()=>{const ok=await dlg({title:'Удалить «'+a.name+'»?',text:'Приложение и его данные будут удалены.',ok:'Удалить',danger:true});if(ok){await T(()=>P('uappRemove',a.id));if(ED.id===a.id)ED.id=null;draw()}})))))};
+  const docs=box=>{
+    const D=(t,d,code)=>h('div',{class:'card'},h('h3',{},t),h('p',{},d),code?h('pre',{class:'cd'},code):null);
+    box.append(D('Как это работает','Приложение — это один HTML-документ. Он запускается в изолированном окне, а к системе обращается через объект alfa. Нажмите «Собрать и установить» — иконка появится на рабочем столе.'),
+      D('alfa.toast(text, icon?)','Короткое сообщение внизу экрана.','alfa.toast("Готово","check")'),
+      D('alfa.notify(title, text)','Уведомление в шторке.','alfa.notify("Таймер","Время вышло")'),
+      D('alfa.vibrate(ms)','Вибрация.','alfa.vibrate(30)'),
+      D('alfa.title(text) · alfa.close()','Заголовок окна и закрытие приложения.','alfa.title("Мои заметки")'),
+      D('alfa.theme()','Promise с текущей темой системы: {hue, dark}.','alfa.theme().then(function(t){document.body.style.background="hsl("+t.hue+" 30% 12%)"})'),
+      D('alfa.store.get / set / del','Постоянное хранилище приложения. Работает через Promise.','alfa.store.set("score",10);\nalfa.store.get("score").then(console.log)'),
+      D('alfa.root.available() · alfa.root.exec(cmd)','Выполнение команд терминала с правами root. При первом вызове система спросит разрешение, а выдать или отозвать его можно в «Root-менеджере».','alfa.root.exec("settings put hue 120")\n  .then(function(r){console.log(r.o)})'),
+      D('Идеи','Таймер, заметки, мини-игра, виджет с погодой через fetch, панель быстрых root-команд.'))};
+  draw()};
+
+/* ================= старт ================= */
+P('theme').then(applyTheme).catch(()=>{}).then(splash);
+})();
+</script>
+</body>
+</html>

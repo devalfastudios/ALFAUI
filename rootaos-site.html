@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0b17">
+<title>Root AOs — root-права для ALFA OS</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0d0b17;--bg2:#151226;--card:#1a1730;--card2:#221e3d;--line:#2c2750;
+  --tx:#ece9ff;--tx2:#a9a3d6;--ac:#8f7bff;--ac2:#5ee0c4;--warn:#ffb86b;
+  --r:22px;
+}
+@media (prefers-color-scheme:light){
+  :root{color-scheme:light;--bg:#f6f4ff;--bg2:#ece8ff;--card:#ffffff;--card2:#f1eeff;--line:#ddd7fb;--tx:#1b1736;--tx2:#5d5790;--ac:#6a54f0;--ac2:#0fa88a;--warn:#c76a00}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--tx);background:
+  radial-gradient(900px 500px at 85% -10%,color-mix(in oklab,var(--ac) 35%,transparent),transparent 60%),
+  radial-gradient(700px 420px at -10% 8%,color-mix(in oklab,var(--ac2) 22%,transparent),transparent 60%),var(--bg);
+  min-height:100vh;padding-bottom:max(28px,env(safe-area-inset-bottom))}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+header.top{display:flex;align-items:center;gap:10px;padding:16px 0}
+.logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,var(--ac),var(--ac2));display:grid;place-items:center;color:#0d0b17;font-weight:800}
+.top b{font-size:17px;letter-spacing:.2px}
+.top nav{margin-left:auto;display:flex;gap:6px}
+.top nav a{color:var(--tx2);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:999px}
+.top nav a:hover{background:var(--card)}
+.hero{padding:26px 0 8px;text-align:center}
+.app-ic{width:116px;height:116px;margin:0 auto 18px;border-radius:34px;position:relative;display:grid;place-items:center;
+  background:linear-gradient(150deg,var(--ac) 0%,#5b3fe0 55%,var(--ac2) 130%);box-shadow:0 24px 60px color-mix(in oklab,var(--ac) 45%,transparent),inset 0 0 0 1px rgba(255,255,255,.18)}
+.app-ic svg{width:64px;height:64px}
+h1{font-size:clamp(34px,8vw,52px);line-height:1.05;letter-spacing:-.02em}
+h1 span{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:14px auto 0;max-width:560px;color:var(--tx2);font-size:17px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 6px}
+.badge{font-size:13px;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--tx2)}
+.badge b{color:var(--tx);font-weight:600}
+.dl{margin:22px auto 6px;display:flex;flex-direction:column;align-items:center;gap:10px}
+button.get{appearance:none;border:0;cursor:pointer;font:700 18px inherit;font-family:inherit;color:#0d0b17;background:linear-gradient(90deg,var(--ac2),var(--ac));
+  padding:17px 34px;border-radius:999px;display:inline-flex;align-items:center;gap:12px;box-shadow:0 14px 40px color-mix(in oklab,var(--ac) 40%,transparent);transition:transform .15s,filter .15s}
+button.get:hover{filter:brightness(1.08)}button.get:active{transform:scale(.97)}
+button.get[disabled]{filter:saturate(.5) brightness(.9);cursor:default}
+button.get svg{width:22px;height:22px}
+.hint{font-size:13px;color:var(--tx2);max-width:420px;text-align:center}
+.hint.ok{color:var(--ac2)}
+.hint.warn{color:var(--warn)}
+section{margin-top:38px}
+h2{font-size:22px;letter-spacing:-.01em;margin-bottom:6px}
+.sub{color:var(--tx2);margin-bottom:16px}
+.about{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px}
+.about p+p{margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.f i{color:var(--ac);display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--card2);margin-bottom:10px;font-style:normal;font-size:22px}
+.f b{display:block;margin-bottom:3px}
+.f span{color:var(--tx2);font-size:14px}
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.step:before{counter-increment:s;content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:linear-gradient(145deg,var(--ac),var(--ac2));color:#0d0b17}
+.step b{display:block}.step span{color:var(--tx2);font-size:14px}
+.req{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.req div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.req small{display:block;color:var(--tx2);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.note svg{flex:none;color:var(--warn)}
+.note{margin-top:16px;display:flex;gap:10px;background:color-mix(in oklab,var(--warn) 12%,var(--card));border:1px solid color-mix(in oklab,var(--warn) 35%,var(--line));border-radius:18px;padding:12px 14px;font-size:14px}
+footer{margin-top:40px;text-align:center;color:var(--tx2);font-size:13px}
+@media (max-width:520px){.req{grid-template-columns:1fr}.top nav{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">R</div><b>Root AOs</b>
+    <nav><a href="#about">О приложении</a><a href="#features">Возможности</a><a href="#install">Установка</a></nav>
+  </header>
+
+  <div class="hero">
+    <div class="app-ic" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 6 52 14v16c0 13-8.5 22-20 28C20.5 52 12 43 12 30V14z" fill="rgba(255,255,255,.14)"/>
+        <path d="M24 33h16M32 25v16" />
+      </svg>
+    </div>
+    <h1>Root для <span>ALFA OS</span></h1>
+    <p class="lead">Разблокировка загрузчика, root-доступ и 25 системных инструментов в одном приложении. А ещё — студия, где свои приложения создаются прямо из кода.</p>
+    <div class="badges">
+      <span class="badge"><b>v1.0.0</b></span>
+      <span class="badge"><b>3,4 МБ</b></span>
+      <span class="badge">ALFA OS <b>beta 0.6+</b></span>
+      <span class="badge">Бесплатно</span>
+    </div>
+    <div class="dl">
+      <button class="get" id="get" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 20h14"/></svg>
+        <span id="getl">Скачать RootAOs.aapk</span>
+      </button>
+      <div class="hint" id="hint">Файл появится в загрузках браузера и в приложении «Файлы».</div>
+    </div>
+  </div>
+
+  <section id="about">
+    <h2>Коротко о приложении</h2>
+    <div class="about">
+      <p><b>Root AOs</b> открывает на ALFA OS доступ суперпользователя. Сначала приложение разблокирует загрузчик (телефон перезагрузится), после чего вы получаете root и все инструменты.</p>
+      <p>Внутри — менеджер root-доступа, терминал, редактор build.prop, заморозка и переименование приложений, резервные копии, скрипты автозапуска и «Студия»: пишете код — получаете настоящее приложение на рабочем столе.</p>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>Что внутри</h2>
+    <p class="sub">Самое интересное из 25 инструментов.</p>
+    <div class="grid">
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg></i><b>Разблокировка загрузчика</b><span>В один тап, с перезагрузкой и логом загрузки.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></i><b>Root-менеджер</b><span>Решайте, каким приложениям давать root.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg></i><b>Root-терминал</b><span>ps, pm, am, settings, getprop, reboot и другие команды.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M10 2v7.5L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2M8.5 2h7"/></svg></i><b>Студия приложений</b><span>Создавайте свои приложения на HTML и JS.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/></svg></i><b>Заморозка приложений</b><span>Отключайте лишнее и переименовывайте остальное.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M5 3h11l4 4v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg></i><b>Резервные копии</b><span>Сохраняйте настройки и возвращайте в любой момент.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></i><b>Тонкая настройка</b><span>Акцент, анимации, профили производительности, фильтры.</span></div>
+      <div class="f"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></i><b>Мониторинг</b><span>Процессы, FPS, logcat и информация о системе.</span></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>Как установить</h2>
+    <div class="steps">
+      <div class="step"><div><b>Скачайте файл</b><span>Нажмите «Скачать» — загрузка появится в уведомлениях.</span></div></div>
+      <div class="step"><div><b>Установите</b><span>Откройте файл из загрузок браузера или из «Файлов» и подтвердите установку.</span></div></div>
+      <div class="step"><div><b>Запустите и разблокируйте загрузчик</b><span>Root AOs проверит систему, предложит разблокировку и перезагрузит устройство.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Требования</h2>
+    <div class="req">
+      <div><small>Система</small>ALFA OS beta 0.6 или новее</div>
+      <div><small>Версия</small>Телефонная версия ALFA OS</div>
+      <div><small>Место</small>около 4 МБ</div>
+      <div><small>Интернет</small>нужен только для скачивания</div>
+    </div>
+    <div class="note"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></svg></span><span>Разблокировка загрузчика меняет состояние проверенной загрузки на «оранжевое». Root-доступ даёт приложениям большие полномочия, выдавайте его осознанно.</span></div>
+  </section>
+
+  <footer>© Root AOs · часть проекта ALFA OS<br>Страница работает внутри браузера ALFA OS</footer>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('get'),lab=document.getElementById('getl'),hint=document.getElementById('hint');
+  var inOS=false;try{inOS=window.parent&&window.parent!==window}catch(e){}
+  var busy=false;
+  function set(t,cls){hint.textContent=t;hint.className='hint '+(cls||'')}
+  btn.addEventListener('click',function(){
+    if(busy)return;
+    if(!inOS){set('Откройте эту страницу в браузере ALFA OS, чтобы скачать приложение.','warn');return}
+    busy=true;btn.disabled=true;lab.textContent='Скачивание…';
+    var acked=false;
+    parent.postMessage({alfaDl:{pkg:'rootaos',name:'RootAOs.aapk',size:3565158}},'*');
+    set('Запрашиваем загрузку…','');
+    window.__ack=function(){acked=true};
+    setTimeout(function(){
+      if(!acked)set('ALFA OS не ответила. Закройте и снова откройте браузер или обновите ALFA OS (нужна версия с менеджером загрузок).','warn');
+      busy=false;btn.disabled=false;lab.textContent=acked?'Скачать ещё раз':'Повторить';
+    },2600);
+  });
+  window.addEventListener('message',function(e){
+    var d=e.data;if(!d||!d.alfaDlState)return;
+    if(d.alfaDlState==='started'){if(window.__ack)window.__ack();set('Загрузка началась. Следите за прогрессом в шторке уведомлений.','ok')}
+    if(d.alfaDlState==='denied'){if(window.__ack)window.__ack()}
+    if(d.alfaDlState==='denied')set('Не удалось начать загрузку: '+(d.reason||'нет сети'),'warn');
+  });
+})();
+</script>
+</body>
+</html>
